@@ -5,3 +5,5 @@ gunicorn
 python-decouple
 dj-database-url
 pillow
+cloudinary
+django-cloudinary-storage

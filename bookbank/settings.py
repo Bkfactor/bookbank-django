@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
     "core",
 ]
 
@@ -71,6 +73,13 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME", default=""),
+    "API_KEY":    config("CLOUDINARY_API_KEY",    default=""),
+    "API_SECRET": config("CLOUDINARY_API_SECRET", default=""),
+}
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # ── Static files ──────────────────────────────────────────────────────────────
 STATIC_URL = "/static/"

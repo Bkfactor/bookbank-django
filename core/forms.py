@@ -31,17 +31,18 @@ class SubmitResourceForm(forms.ModelForm):
     class Meta:
         model  = Resource
         fields = ["title", "type", "faculty", "department",
-                  "level", "year", "drive_url"]
+                  "level", "year", "file", "drive_url"]
         labels = {
             "title":     "Material Title",
             "type":      "Material Type",
             "level":     "Level",
             "year":      "Academic Year (optional)",
+            "file":      "Upload File (PDF, DOCX, PPTX etc.)",
             "drive_url": "Google Drive Link",
         }
         widgets = {
             "title": forms.TextInput(attrs={
-                "placeholder": "e.g. CSC 301 Past Questions 2023/2024"
+                "placeholder": "e.g. GST 107 Past Questions 2023/2024"
             }),
             "year": forms.TextInput(attrs={"placeholder": "e.g. 2023/2024"}),
             "drive_url": forms.URLInput(attrs={
