@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}LCU Book Bank{% endblock %} · Lead City University</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container navbar__inner">
+      <a href="{% url 'home' %}" class="navbar__brand">
+        <div class="navbar__brand-icon">📚</div>
+        <div>LCU Book Bank<span class="navbar__brand-sub">Student Ambassador Team</span></div>
+      </a>
+      <nav class="navbar__nav">
+        <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a>
+        <a href="{% url 'home' %}#faculties">Faculties</a>
+        <a href="{% url 'home' %}#levels">By Level</a>
+        <a href="{% url 'search' %}" {% if request.resolver_match.url_name == 'search' %}class="active"{% endif %}>Search</a>
+        <a href="{% url 'upload' %}" class="navbar__cta">+ Submit Material</a>
+      </nav>
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand"><div class="footer__brand-dot"></div>Lead City Book Bank</div>
+          <p class="footer__tagline">A student-driven academic resource platform for Lead City University. Every material shared is a student helped.</p>
+          <p class="footer__credit">A Student Ambassador Team initiative · Built by Amb. Benjamin Erenose Omonkhodion</p>
+        </div>
+        <div class="footer__col">
+          <h4>Browse</h4>
+          <ul>
+            <li><a href="{% url 'home' %}#faculties">By Faculty</a></li>
+            <li><a href="{% url 'home' %}#levels">By Level</a></li>
+            <li><a href="{% url 'search' %}?type=past-questions">Past Questions</a></li>
+            <li><a href="{% url 'search' %}?type=lecture-notes">Lecture Notes</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Contribute</h4>
+          <ul>
+            <li><a href="{% url 'upload' %}">Submit Material</a></li>
+            <li><a href="mailto:leadcitybookbank@gmail.com">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>LCU</h4>
+          <ul>
+            <li><a href="https://lcu.edu.ng/" target="_blank">LCU Website</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2025 Lead City Book Bank · Student Ambassador Team</span>
+        <span>📌 Materials open from Google Drive · No login required</span>
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

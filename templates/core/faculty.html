@@ -1,0 +1,128 @@
+{% extends "core/base.html" %}
+{% block title %}{{ faculty.name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:2rem;padding-bottom:4rem;">
+
+  <a href="{% url 'home' %}#faculties" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--text-3);margin-bottom:1.5rem;font-weight:500;">← All Faculties</a>
+
+  <!-- Faculty hero -->
+  <div class="faculty-hero" style="border-left:4px solid {{ faculty.color }};">
+    <div class="faculty-hero__inner">
+      <div class="faculty-hero__emoji">{{ faculty.emoji }}</div>
+      <div>
+        <div class="faculty-hero__abbr">{{ faculty.abbr }}</div>
+        <h1 class="faculty-hero__name">{{ faculty.name }}</h1>
+        <p class="faculty-hero__desc">{{ faculty.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Department tabs -->
+  <div class="dept-tabs">
+    {% for dept in departments %}
+    <a href="{% url 'faculty' faculty.slug %}?dept={{ dept.slug }}"
+       class="dept-tab {% if dept == active_dept %}active{% endif %}">
+      {{ dept.name }}
+      {% if dept.material_count %}<span style="margin-left:.3rem;opacity:.6;font-size:.72rem;">({{ dept.material_count }})</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Materials -->
+  {% if active_dept %}
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+    <h2 style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--navy);">
+      {{ active_dept.name }}
+    </h2>
+    {% if active_dept.drive_url %}
+    <a href="{{ active_dept.drive_url }}" target="_blank" class="btn btn--outline btn--sm">📂 Open Drive Folder</a>
+    {% endif %}
+  </div>
+
+  {% if materials %}
+  <div class="materials-grid">
+    {% for resource in materials %}
+    {% include "core/_material_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state__icon">📂</div>
+    <p class="empty-state__title">No materials yet for {{ active_dept.name }}</p>
+    <p class="empty-state__sub">Know a course rep with notes? Send them the submit link.</p>
+    <div class="empty-state__actions">
+      {% if active_dept.drive_url %}
+      <a href="{{ active_dept.drive_url }}" target="_blank" class="btn btn--outline">Open Drive Folder →</a>
+      {% endif %}
+      <a href="{% url 'upload' %}" class="btn btn--primary">Submit Material →</a>
+    </div>
+  </div>
+  {% endif %}
+  {% endif %}
+
+</div>
+
+<!-- Review modal -->
+<div class="modal-overlay" id="review-modal" onclick="if(event.target===this)closeReview()">
+  <div class="modal">
+    <div class="modal__title">⭐ Rate this material</div>
+    <p class="modal__sub">Your rating helps other students find what's worth downloading.</p>
+    <div class="modal__material" id="review-material-title"></div>
+    <form id="review-form">
+      {% csrf_token %}
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;">
+        {% for i in "12345" %}
+        <label style="cursor:pointer;">
+          <input type="radio" name="rating" value="{{ i }}" style="display:none;" required />
+          <span class="star-btn" data-val="{{ i }}">★</span>
+        </label>
+        {% endfor %}
+      </div>
+      <textarea name="comment" placeholder="Optional comment…" style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;font-family:var(--font-body);font-size:.875rem;resize:vertical;min-height:80px;margin-bottom:1rem;"></textarea>
+      <div class="modal__actions">
+        <button type="submit" class="btn btn--primary" style="flex:1">Submit Rating →</button>
+        <button type="button" class="btn btn--ghost" onclick="closeReview()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let activeResourceId = null;
+
+function openReview(id, title) {
+  activeResourceId = id;
+  document.getElementById("review-material-title").textContent = title;
+  document.getElementById("review-modal").classList.add("open");
+}
+function closeReview() {
+  document.getElementById("review-modal").classList.remove("open");
+  activeResourceId = null;
+}
+
+// Star hover styling
+document.querySelectorAll(".star-btn").forEach(star => {
+  star.style.cssText = "font-size:1.8rem;color:var(--border-dark);cursor:pointer;transition:color .1s;";
+  star.addEventListener("mouseover", () => {
+    document.querySelectorAll(".star-btn").forEach((s, i) => {
+      s.style.color = i <= parseInt(star.dataset.val) - 1 ? "var(--gold)" : "var(--border-dark)";
+    });
+  });
+});
+
+document.getElementById("review-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  const res  = await fetch(`/review/${activeResourceId}/`, { method: "POST", body: data });
+  const json = await res.json();
+  if (json.ok) {
+    closeReview();
+    alert(`Thanks! Average rating is now ⭐ ${json.avg} from ${json.count} review(s).`);
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "core/base.html" %}
+{% block title %}Your Academic Book Bank{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__eyebrow">Lead City University · Student Ambassador Team</div>
+    <h1 class="hero__title">Your Academic <em>Book Bank</em></h1>
+    <p class="hero__sub">Course notes, past questions, textbooks and slides — organised by faculty and department, built by students for students.</p>
+
+    <form action="{% url 'search' %}" method="get" class="search-bar">
+      <input name="q" type="text" placeholder="Search by course code, department or level…" autocomplete="off" />
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat__number">{{ total_materials }}</div>
+        <div class="stat__label">Materials</div>
+      </div>
+      <div class="stat">
+        <div class="stat__number">{{ total_faculties }}</div>
+        <div class="stat__label">Faculties</div>
+      </div>
+      <div class="stat">
+        <div class="stat__number">{{ total_depts }}</div>
+        <div class="stat__label">Departments</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Browse by Faculty ─────────────────────────────────────────────────── -->
+<section class="section" id="faculties">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Browse by <span>Faculty</span></h2>
+      <span class="section-sub">{{ total_faculties }} faculties · {{ total_depts }} departments</span>
+    </div>
+    <div class="faculty-grid">
+      {% for faculty in faculties %}
+      <a href="{% url 'faculty' faculty.slug %}" class="faculty-card">
+        <div class="faculty-card__icon">{{ faculty.emoji }}</div>
+        <div class="faculty-card__body">
+          <div class="faculty-card__abbr">{{ faculty.abbr }}</div>
+          <div class="faculty-card__name">{{ faculty.name }}</div>
+          <p class="faculty-card__desc">{{ faculty.description }}</p>
+          <div class="faculty-card__meta">
+            <span class="badge">{{ faculty.degree }}</span>
+            <span class="badge badge--count">{{ faculty.dept_count }} dept{{ faculty.dept_count|pluralize }}</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Recently Added ────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom:1.5rem;">Recently <span>Added</span></h2>
+    {% if recent %}
+    <div class="materials-grid">
+      {% for r in recent %}
+      {% include "core/_material_card.html" with resource=r %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state__icon">📭</div>
+      <p class="empty-state__title">No materials yet</p>
+      <p class="empty-state__sub">Be the first to contribute — your coursemates are waiting.</p>
+      <div class="empty-state__actions">
+        <a href="{% url 'upload' %}" class="btn btn--primary">Submit the first material →</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Browse by Level ───────────────────────────────────────────────────── -->
+<section class="section" id="levels">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom:1.5rem;">Browse by <span>Level</span></h2>
+    <div class="level-pills">
+      <a href="{% url 'search' %}?level=100" class="level-pill">100 Level</a>
+      <a href="{% url 'search' %}?level=200" class="level-pill">200 Level</a>
+      <a href="{% url 'search' %}?level=300" class="level-pill">300 Level</a>
+      <a href="{% url 'search' %}?level=400" class="level-pill">400 Level</a>
+      <a href="{% url 'search' %}?level=500" class="level-pill">
+        500 Level<span class="level-pill__sub">Eng · Law · Arch</span>
+      </a>
+      <a href="{% url 'search' %}?level=600" class="level-pill">
+        600 Level<span class="level-pill__sub">Med · Dent · Pharm</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CTAs ──────────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="cta-grid">
+      <div class="cta-card cta-card--primary">
+        <div class="cta-card__label">Contribute</div>
+        <h2 class="cta-card__title">Have notes or past questions?</h2>
+        <p class="cta-card__sub">Course reps, lecturers and students — submit your materials here. Every upload directly helps a coursemate prepare better.</p>
+        <div class="cta-steps">
+          <div class="cta-step"><div class="cta-step__num">1</div><div class="cta-step__text">Fill the short form</div></div>
+          <div class="cta-step"><div class="cta-step__num">2</div><div class="cta-step__text">Paste your Google Drive link</div></div>
+          <div class="cta-step"><div class="cta-step__num">3</div><div class="cta-step__text">Goes live after review</div></div>
+        </div>
+        <a href="{% url 'upload' %}" class="btn btn--white btn--lg">Submit Material →</a>
+      </div>
+      <div class="cta-card cta-card--secondary">
+        <div class="cta-card__label">Academic Concern</div>
+        <h2 class="cta-card__title">Missing a material?</h2>
+        <p class="cta-card__sub">Report missing resources, difficult courses or any academic challenge. The Student Ambassador Team reviews every submission.</p>
+        <a href="mailto:leadcitybookbank@gmail.com" class="btn btn--outline btn--lg">Send Feedback →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Split filter for level pills since Django templates can't split strings natively */
+</style>
+{% endblock %}

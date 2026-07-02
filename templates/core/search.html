@@ -1,0 +1,109 @@
+{% extends "core/base.html" %}
+{% block title %}Search{% endblock %}
+
+{% block content %}
+
+<div style="background:var(--navy);padding:2rem 0;border-bottom:3px solid var(--gold);">
+  <div class="container">
+    <form action="{% url 'search' %}" method="get" class="search-bar" style="max-width:620px;margin:0;">
+      <input name="q" type="text" value="{{ q }}" placeholder="Search course code, department or level…" autocomplete="off" />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</div>
+
+<div class="container" style="padding-top:2rem;padding-bottom:3rem;">
+
+  <!-- Filters -->
+  <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.75rem;align-items:center;">
+    <span style="font-size:.82rem;color:var(--text-3);font-weight:500;">Filter:</span>
+    {% for val, label in type_choices %}
+    <a href="?q={{ q }}&level={{ level }}&type={{ val }}"
+       class="badge {% if type == val %}badge--count{% endif %}"
+       style="padding:.3rem .75rem;cursor:pointer;font-size:.8rem;">{{ label }}</a>
+    {% endfor %}
+    {% if level or type or q %}
+    <a href="{% url 'search' %}" style="font-size:.8rem;color:var(--text-3);margin-left:.25rem;">✕ Clear</a>
+    {% endif %}
+  </div>
+
+  <!-- Result count -->
+  <p style="font-size:.85rem;color:var(--text-3);margin-bottom:1.25rem;font-weight:500;">
+    {% if q %}Results for <strong style="color:var(--navy);">"{{ q }}"</strong>{% endif %}
+    {% if level %} · <strong style="color:var(--navy);">{{ level }} Level</strong>{% endif %}
+    — <strong>{{ results|length }}</strong> material{{ results|length|pluralize }} found
+  </p>
+
+  {% if results %}
+  <div class="materials-grid">
+    {% for resource in results %}
+    {% include "core/_material_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state__icon">🔍</div>
+    <p class="empty-state__title">No results found</p>
+    <p class="empty-state__sub">Try a different course code, department name, or level.<br>Or be the first to submit this material.</p>
+    <div class="empty-state__actions">
+      <a href="{% url 'upload' %}" class="btn btn--primary">Submit this material →</a>
+      <a href="{% url 'search' %}" class="btn btn--ghost">Clear search</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Review modal (same as faculty page) -->
+<div class="modal-overlay" id="review-modal" onclick="if(event.target===this)closeReview()">
+  <div class="modal">
+    <div class="modal__title">⭐ Rate this material</div>
+    <p class="modal__sub">Your rating helps other students find what's worth downloading.</p>
+    <div class="modal__material" id="review-material-title"></div>
+    <form id="review-form">
+      {% csrf_token %}
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;">
+        {% for i in "12345" %}
+        <label style="cursor:pointer;">
+          <input type="radio" name="rating" value="{{ i }}" style="display:none;" required />
+          <span class="star-btn" data-val="{{ i }}">★</span>
+        </label>
+        {% endfor %}
+      </div>
+      <textarea name="comment" placeholder="Optional comment…" style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;font-family:var(--font-body);font-size:.875rem;resize:vertical;min-height:80px;margin-bottom:1rem;"></textarea>
+      <div class="modal__actions">
+        <button type="submit" class="btn btn--primary" style="flex:1">Submit Rating →</button>
+        <button type="button" class="btn btn--ghost" onclick="closeReview()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let activeResourceId = null;
+function openReview(id, title) {
+  activeResourceId = id;
+  document.getElementById("review-material-title").textContent = title;
+  document.getElementById("review-modal").classList.add("open");
+}
+function closeReview() {
+  document.getElementById("review-modal").classList.remove("open");
+}
+document.querySelectorAll(".star-btn").forEach(star => {
+  star.style.cssText = "font-size:1.8rem;color:var(--border-dark);cursor:pointer;transition:color .1s;";
+  star.addEventListener("click", () => {
+    document.querySelectorAll(".star-btn").forEach((s, i) => {
+      s.style.color = i < parseInt(star.dataset.val) ? "var(--gold)" : "var(--border-dark)";
+    });
+  });
+});
+document.getElementById("review-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = new FormData(e.target);
+  const res  = await fetch(`/review/${activeResourceId}/`, { method: "POST", body: data });
+  const json = await res.json();
+  if (json.ok) { closeReview(); alert(`Thanks! New average: ⭐ ${json.avg}`); }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "core/base.html" %}
+{% block title %}Submit Material{% endblock %}
+
+{% block content %}
+
+<div class="upload-hero">
+  <div class="container upload-hero__inner">
+    <h1 class="upload-hero__title">Submit a Material</h1>
+    <p class="upload-hero__sub">Fill the form below. We'll review it and publish it for all LCU students.</p>
+  </div>
+</div>
+
+<div class="container" style="padding-top:3rem;padding-bottom:4rem;">
+  <div style="max-width:680px;margin:0 auto;">
+
+    {% if form.errors %}
+    <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;color:#991b1b;font-size:.875rem;">
+      ⚠️ Please fix the errors below before submitting.
+    </div>
+    {% endif %}
+
+    <form method="post" id="submit-form">
+      {% csrf_token %}
+
+      <!-- Name -->
+      <div class="form-group">
+        <label class="form-label">Your Name *</label>
+        {{ form.name }}
+        {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
+      </div>
+
+      <!-- Contact -->
+      <div class="form-group">
+        <label class="form-label">Email <span style="opacity:.5;font-weight:400;">(optional — not published)</span></label>
+        {{ form.contact }}
+      </div>
+
+      <!-- Title -->
+      <div class="form-group">
+        <label class="form-label">Material Title *</label>
+        {{ form.title }}
+        {% if form.title.errors %}<p class="form-error">{{ form.title.errors.0 }}</p>{% endif %}
+        <p class="form-hint">Be specific: "CSC 301 Past Questions 2023/2024" not just "Past Questions"</p>
+      </div>
+
+      <!-- Type -->
+      <div class="form-group">
+        <label class="form-label">Material Type *</label>
+        {{ form.type }}
+        {% if form.type.errors %}<p class="form-error">{{ form.type.errors.0 }}</p>{% endif %}
+      </div>
+
+      <!-- Faculty + Department (dynamic) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Faculty *</label>
+          {{ form.faculty }}
+          {% if form.faculty.errors %}<p class="form-error">{{ form.faculty.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Department *</label>
+          {{ form.department }}
+          {% if form.department.errors %}<p class="form-error">{{ form.department.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      <!-- Level + Year -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Level *</label>
+          {{ form.level }}
+          {% if form.level.errors %}<p class="form-error">{{ form.level.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Academic Year</label>
+          {{ form.year }}
+        </div>
+      </div>
+
+      <!-- Drive URL -->
+      <div class="form-group">
+        <label class="form-label">Google Drive Link *</label>
+        {{ form.drive_url }}
+        {% if form.drive_url.errors %}<p class="form-error">{{ form.drive_url.errors.0 }}</p>{% endif %}
+        <p class="form-hint">
+          Set sharing to <strong>"Anyone with the link can view"</strong> before pasting the link here.
+        </p>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--lg" style="width:100%;margin-top:.5rem;">
+        Submit for Review →
+      </button>
+      <p style="text-align:center;font-size:.8rem;color:var(--text-3);margin-top:.75rem;">
+        Materials are reviewed before going live — usually within 24 hours.
+      </p>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label {
+    display: block;
+    font-size: .85rem; font-weight: 600;
+    color: var(--navy);
+    margin-bottom: .4rem;
+  }
+  .form-hint { font-size: .78rem; color: var(--text-3); margin-top: .35rem; }
+  .form-error { font-size: .78rem; color: var(--red); margin-top: .3rem; }
+
+  /* Style all form inputs uniformly */
+  #submit-form input[type="text"],
+  #submit-form input[type="email"],
+  #submit-form input[type="url"],
+  #submit-form select,
+  #submit-form textarea {
+    width: 100%;
+    padding: .75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: .9rem;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  #submit-form input:focus,
+  #submit-form select:focus,
+  #submit-form textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,162,39,.15);
+  }
+  #submit-form select { appearance: none; cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Dynamic department dropdown — loads via AJAX when faculty changes
+document.getElementById("id_faculty").addEventListener("change", function() {
+  const facultyId = this.value;
+  const deptSelect = document.getElementById("id_department");
+  deptSelect.innerHTML = '<option value="">Loading…</option>';
+
+  if (!facultyId) {
+    deptSelect.innerHTML = '<option value="">— Select Faculty first —</option>';
+    return;
+  }
+
+  fetch(`/ajax/departments/?faculty_id=${facultyId}`)
+    .then(r => r.json())
+    .then(data => {
+      deptSelect.innerHTML = '<option value="">— Select Department —</option>';
+      data.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d.id;
+        opt.textContent = d.name;
+        deptSelect.appendChild(opt);
+      });
+    });
+});
+</script>
+{% endblock %}
