@@ -119,9 +119,9 @@ class Resource(models.Model):
         }
         return emojis.get(self.type, "📄")
     def get_file_url(self):
-    if self.file:
-        return self.file.url
-    return self.drive_url or ""
+        if self.file:
+            return self.file.url
+        return self.drive_url or ""
 
 
 class Review(models.Model):
