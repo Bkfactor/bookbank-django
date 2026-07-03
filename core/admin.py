@@ -56,7 +56,7 @@ class ResourceAdmin(admin.ModelAdmin):
             "fields": ("title", "type", "faculty", "department", "level", "year")
         }),
         ("Drive Link", {
-            "fields": ("drive_url", "drive_link_preview")
+            "fields": ("file","drive_url", "drive_link_preview")
         }),
         ("Submission", {
             "fields": ("uploaded_by", "contact", "created_at")

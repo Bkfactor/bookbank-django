@@ -62,6 +62,19 @@ class SubmitResourceForm(forms.ModelForm):
             except (ValueError, TypeError):
                 pass
 
+        def clean(self):
+            cleaned_data = super().clean()
+
+            uploaded_file = cleaned_data.get("file")
+            drive_url = cleaned_data.get("drive_url")
+
+            if not uploaded_file and not drive_url:
+                raise forms.ValidationError(
+                "Please upload a file or provide a Google Drive link."
+        )
+
+            return cleaned_data
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         instance.uploaded_by = self.cleaned_data.get("name", "Anonymous")

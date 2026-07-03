@@ -19,7 +19,7 @@
     </div>
     {% endif %}
 
-    <form method="post" id="submit-form">
+    <form method="post" enctype="multipart/form-data" id="submit-form">
       {% csrf_token %}
 
       <!-- Name -->
@@ -77,14 +77,31 @@
         </div>
       </div>
 
+      <!-- File Upload -->
+<div class="form-group">
+  <label class="form-label">Upload File (Optional)</label>
+  {{ form.file }}
+  {% if form.file.errors %}
+    <p class="form-error">{{ form.file.errors.0 }}</p>
+  {% endif %}
+  <p class="form-hint">
+    Upload a PDF, DOCX, PPTX or other study material.
+  </p>
+</div>
+
+<div style="text-align:center;margin:1rem 0;color:#666;">
+  <strong>OR</strong>
+</div>
+
       <!-- Drive URL -->
       <div class="form-group">
-        <label class="form-label">Google Drive Link *</label>
+        <label class="form-label">Google Drive Link (Optional)</label>
         {{ form.drive_url }}
         {% if form.drive_url.errors %}<p class="form-error">{{ form.drive_url.errors.0 }}</p>{% endif %}
         <p class="form-hint">
-          Set sharing to <strong>"Anyone with the link can view"</strong> before pasting the link here.
-        </p>
+    Upload a file above or paste a Google Drive link. If using Google Drive,
+    make sure the file is shared as <strong>"Anyone with the link can view"</strong>.
+      </p>
       </div>
 
       <button type="submit" class="btn btn--primary btn--lg" style="width:100%;margin-top:.5rem;">
@@ -115,6 +132,7 @@
   #submit-form input[type="text"],
   #submit-form input[type="email"],
   #submit-form input[type="url"],
+  #submit-form input[type="file"],
   #submit-form select,
   #submit-form textarea {
     width: 100%;

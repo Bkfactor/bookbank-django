@@ -80,7 +80,10 @@ class Resource(models.Model):
                                     help_text="e.g. 2023/2024")
     file = models.FileField(upload_to="materials/", blank=True, null=True,
                         help_text="Upload PDF, DOCX, PPTX etc. (max 20MB)")
-    drive_url    = models.URLField(help_text="Google Drive sharing link")
+    drive_url = models.URLField(
+    blank=True,
+    help_text="Google Drive sharing link (optional)"
+)
     uploaded_by  = models.CharField(max_length=150,
                                     help_text="Submitter name or 'Anonymous'")
     contact      = models.EmailField(blank=True,
