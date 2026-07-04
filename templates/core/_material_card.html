@@ -10,7 +10,13 @@
     {% endwith %}
   </div>
   <div class="material-card__actions">
-    <a href="{{ resource.drive_url }}" target="_blank" rel="noopener" class="btn btn--primary btn--sm">Open →</a>
+    {% with file_link=resource.get_file_url %}
+    {% if file_link %}
+    <a href="{{ file_link }}" target="_blank" rel="noopener" class="btn btn--primary btn--sm">Open →</a>
+    {% else %}
+    <span class="btn btn--primary btn--sm" style="opacity:.4;cursor:not-allowed;">No File</span>
+    {% endif %}
+    {% endwith %}
     <button class="btn btn--ghost btn--sm"
             onclick="openReview({{ resource.id }}, '{{ resource.title|escapejs }}')">
       ⭐ Rate

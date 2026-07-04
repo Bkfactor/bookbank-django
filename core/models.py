@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-
+from cloudinary.models import CloudinaryField
 
 class Faculty(models.Model):
     name        = models.CharField(max_length=200)
@@ -78,12 +78,11 @@ class Resource(models.Model):
     level        = models.IntegerField(choices=LEVEL_CHOICES)
     year         = models.CharField(max_length=20, blank=True,
                                     help_text="e.g. 2023/2024")
-    file = models.FileField(upload_to="materials/", blank=True, null=True,
-                        help_text="Upload PDF, DOCX, PPTX etc. (max 20MB)")
-    drive_url = models.URLField(
-    blank=True,
-    help_text="Google Drive sharing link (optional)"
-)
+    
+
+    file_url = models.URLField(blank=True, help_text="Auto-filled by Cloudinary on upload")
+    drive_url = models.URLField(blank=True, help_text="Google Drive link (optional)")
+
     uploaded_by  = models.CharField(max_length=150,
                                     help_text="Submitter name or 'Anonymous'")
     contact      = models.EmailField(blank=True,
@@ -122,8 +121,8 @@ class Resource(models.Model):
         }
         return emojis.get(self.type, "📄")
     def get_file_url(self):
-        if self.file:
-            return self.file.url
+        if self.file_url:
+            return self.file_url
         return self.drive_url or ""
 
 

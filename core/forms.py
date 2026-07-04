@@ -31,13 +31,13 @@ class SubmitResourceForm(forms.ModelForm):
     class Meta:
         model  = Resource
         fields = ["title", "type", "faculty", "department",
-                  "level", "year", "file", "drive_url"]
+                  "level", "year", "drive_url"]
         labels = {
             "title":     "Material Title",
             "type":      "Material Type",
             "level":     "Level",
             "year":      "Academic Year (optional)",
-            "file":      "Upload File (PDF, DOCX, PPTX etc.)",
+            "file_url":  "Upload File (PDF, DOCX, PPTX etc.)",
             "drive_url": "Google Drive Link",
         }
         widgets = {
@@ -65,10 +65,10 @@ class SubmitResourceForm(forms.ModelForm):
         def clean(self):
             cleaned_data = super().clean()
 
-            uploaded_file = cleaned_data.get("file")
+            file_url = cleaned_data.get("file_url")
             drive_url = cleaned_data.get("drive_url")
 
-            if not uploaded_file and not drive_url:
+            if not file_url and not drive_url:
                 raise forms.ValidationError(
                 "Please upload a file or provide a Google Drive link."
         )

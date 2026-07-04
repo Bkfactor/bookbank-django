@@ -80,10 +80,7 @@
       <!-- File Upload -->
 <div class="form-group">
   <label class="form-label">Upload File (Optional)</label>
-  {{ form.file }}
-  {% if form.file.errors %}
-    <p class="form-error">{{ form.file.errors.0 }}</p>
-  {% endif %}
+  <input type="file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" />
   <p class="form-hint">
     Upload a PDF, DOCX, PPTX or other study material.
   </p>

@@ -3,7 +3,7 @@ from django.db.models import Q, Avg
 from django.http import JsonResponse
 from .models import Faculty, Department, Resource, Review
 from .forms import SubmitResourceForm, ReviewForm
-
+import cloudinary.uploader
 
 def home(request):
     faculties = Faculty.objects.prefetch_related("departments").all()
@@ -76,16 +76,23 @@ def upload(request):
     if request.method == "POST":
         form = SubmitResourceForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            uploaded_file = request.FILES.get("file")
+            if uploaded_file:
+                result = cloudinary.uploader.upload(
+                    uploaded_file,
+                    resource_type="raw",
+                    folder="bookbank/materials",
+                )
+                instance.file_url = result.get("secure_url", "")
+            instance.uploaded_by = form.cleaned_data.get("name", "Anonymous")
+            instance.contact = form.cleaned_data.get("contact", "")
+            instance.status = "pending"
+            instance.save()
             return redirect("upload_success")
     else:
         form = SubmitResourceForm()
-
-    faculties = Faculty.objects.prefetch_related("departments").all()
-    return render(request, "core/upload.html", {
-        "form": form,
-        "faculties": faculties,
-    })
+    return render(request, "core/upload.html", {"form": form})
 
 
 def upload_success(request):
