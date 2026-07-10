@@ -1,0 +1,51 @@
+# === Secrets & Environment ===
+.env
+.env.local
+.env.*.local
+
+# === Database ===
+db.sqlite3
+db.sqlite3-journal
+*.db
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# === Virtual Environment ===
+venv/
+env/
+.venv/
+ENV/
+
+# === Django ===
+/staticfiles/
+/media/
+*.log
+local_settings.py
+
+# === Distribution / Packaging ===
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# === Testing ===
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# === IDEs & Editors ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
