@@ -8,11 +8,12 @@ from core.models import Faculty, Department
 
 FACULTY_DATA = [
   {
-    "name": "Natural & Applied Sciences", "abbr": "NAS", "emoji": "🧪",
+    "name": "Natural & Applied Sciences", "abbr": "FONAS", "emoji": "🧪",
     "degree": "B.Sc", "color": "#16a34a", "order": 1,
     "drive_url": "https://drive.google.com/drive/folders/1AMFcGGdT8dswBLptKsJDyHBedjFb8IuH",
     "description": "Computing, Science or IT? Your notes, past questions and slides are all right here.",
     "departments": [
+      ("Computer Science",                      "https://drive.google.com/drive/folders/17hrzCz8n6e2ZksXkccTjQ2sCA2B9DDRf"),
       ("Computer & Information Science",       "https://drive.google.com/drive/folders/17hrzCz8n6e2ZksXkccTjQ2sCA2B9DDRf"),
       ("Software Engineering",                  "https://drive.google.com/drive/folders/18_gHum3hc9NZlr0NcEOzLhrHQTsZVcPF"),
       ("Cyber Security",                        "https://drive.google.com/drive/folders/18UKInWRHVNB8vR47LtpEQA7oQdQfswwJ"),
