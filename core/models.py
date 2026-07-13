@@ -122,6 +122,9 @@ class Resource(models.Model):
         return emojis.get(self.type, "📄")
     def get_file_url(self):
         if self.file_url:
+            # Inject fl_inline so PDFs open in the browser instead of force-downloading
+            if "res.cloudinary.com" in self.file_url:
+                return self.file_url.replace("/upload/", "/upload/fl_inline/")
             return self.file_url
         return self.drive_url or ""
 
