@@ -1,10 +1,18 @@
 {% load static %}
 <div class="material-card">
-  <div class="material-card__type">{{ resource.type_emoji }} {{ resource.get_type_display }}</div>
+  <div class="material-card__type">
+    {% if resource.type == "lecture-notes" %}<span class="type-badge type-badge--notes">{{ resource.type_emoji }} {{ resource.get_type_display }}</span>
+    {% elif resource.type == "past-questions" %}<span class="type-badge type-badge--past">{{ resource.type_emoji }} {{ resource.get_type_display }}</span>
+    {% elif resource.type == "textbook" %}<span class="type-badge type-badge--textbook">{{ resource.type_emoji }} {{ resource.get_type_display }}</span>
+    {% elif resource.type == "slides" %}<span class="type-badge type-badge--slides">{{ resource.type_emoji }} {{ resource.get_type_display }}</span>
+    {% elif resource.type == "lab-manual" %}<span class="type-badge type-badge--lab">{{ resource.type_emoji }} {{ resource.get_type_display }}</span>
+    {% else %}<span class="type-badge type-badge--outline">{{ resource.type_emoji }} {{ resource.get_type_display }}</span>
+    {% endif %}
+  </div>
   <h3 class="material-card__title">{{ resource.title }}</h3>
   <div class="material-card__meta">
-    {% if resource.level %}<span class="badge">{{ resource.level }}L</span>{% endif %}
-    {% if resource.year %}<span class="badge">{{ resource.year }}</span>{% endif %}
+    {% if resource.level %}<span class="level-badge">{{ resource.level }} Level</span>{% endif %}
+    {% if resource.year %}<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">{{ resource.year }}</span>{% endif %}
     {% with avg=resource.avg_rating count=resource.review_count %}
     {% if avg %}<span class="badge badge--rating">⭐ {{ avg }} ({{ count }})</span>{% endif %}
     {% endwith %}
