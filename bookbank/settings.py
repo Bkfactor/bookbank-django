@@ -70,7 +70,7 @@ WSGI_APPLICATION = "bookbank.wsgi.application"
 # Uses SQLite locally (zero setup), PostgreSQL in production automatically
 _db_url = config("DATABASE_URL", default="")
 if _db_url:
-    DATABASES = {"default": dj_database_url.parse(_db_url, conn_max_age=600)}
+    DATABASES = {"default": dj_database_url.parse(_db_url, conn_max_age=0)}
 else:
     DATABASES = {
         "default": {
