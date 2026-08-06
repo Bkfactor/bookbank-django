@@ -1,98 +1,139 @@
-:root {
-    --primary: #1B4FA8; /* LCU Blue */
-    --secondary: #E8198A; /* Pink */
+/* --- LIGHT MODE (Lead City Blue / Pink Theme) --- */
+:root, [data-theme="light"] {
+    --primary: #1B4FA8;          /* LCU Blue */
+    --secondary: #E8198A;        /* LCU Pink */
+    
+    --body-bg: #f8fafc;
+    --body-fg: #334155;
+    --body-quiet-color: #64748b;
+    --body-loud-color: #0f172a;
+    
+    --header-color: #ffffff;
+    --header-bg: var(--primary);
+    --header-branding-color: #ffffff;
+    --header-link-color: #e2e8f0;
+    
+    --breadcrumbs-bg: #ffffff;
+    --breadcrumbs-fg: #64748b;
+    --breadcrumbs-link-fg: var(--primary);
+    --breadcrumbs-link-selected-fg: #0f172a;
+    
     --link-fg: var(--primary);
     --link-hover-color: var(--secondary);
     --link-selected-fg: var(--secondary);
-    --header-color: var(--primary);
-    --header-branding-color: var(--primary);
-    --header-bg: #ffffff;
-    --header-link-color: #333333;
-    --breadcrumbs-bg: #f8f9fa;
-    --breadcrumbs-fg: #666666;
-    --breadcrumbs-link-fg: var(--primary);
-    --breadcrumbs-link-selected-fg: #333333;
+    
+    --button-fg: #ffffff;
     --button-bg: var(--primary);
     --button-hover-bg: #153c82;
     --default-button-bg: var(--secondary);
     --default-button-hover-bg: #d0157a;
+    
+    --border-color: #e2e8f0;
+    --hairline-color: #cbd5e1;
+    --darkened-bg: #f1f5f9;
+    --selected-bg: #eff6ff;
+    --selected-row: #e0f2fe;
+
     --font-family-primary: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* --- DARK MODE (Deep Navy / Pink Theme) --- */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary: #2563eb;       /* Brighter blue for dark mode */
+        --secondary: #E8198A;     /* LCU Pink */
+        
+        --body-bg: #0f172a;       /* Deep navy background */
+        --body-fg: #e2e8f0;       /* Light slate text */
+        --body-quiet-color: #94a3b8;
+        --body-loud-color: #f8fafc;
+        
+        --header-color: #f8fafc;
+        --header-bg: #0b1120;     /* Very dark navy for header */
+        --header-branding-color: #f8fafc;
+        --header-link-color: #cbd5e1;
+        
+        --breadcrumbs-bg: #1e293b;
+        --breadcrumbs-fg: #94a3b8;
+        --breadcrumbs-link-fg: #60a5fa;
+        --breadcrumbs-link-selected-fg: #f8fafc;
+        
+        --link-fg: #60a5fa;       /* Light blue links */
+        --link-hover-color: var(--secondary);
+        --link-selected-fg: var(--secondary);
+        
+        --button-fg: #ffffff;
+        --button-bg: var(--primary);
+        --button-hover-bg: #1d4ed8;
+        --default-button-bg: var(--secondary);
+        --default-button-hover-bg: #d0157a;
+        
+        --border-color: #334155;
+        --hairline-color: #1e293b;
+        --darkened-bg: #1e293b;
+        --selected-bg: #1e293b;
+        --selected-row: #334155;
+    }
+}
+
+[data-theme="dark"] {
+    --primary: #2563eb;       
+    --secondary: #E8198A;     
+    --body-bg: #0f172a;       
+    --body-fg: #e2e8f0;       
+    --body-quiet-color: #94a3b8;
+    --body-loud-color: #f8fafc;
+    --header-color: #f8fafc;
+    --header-bg: #0b1120;     
+    --header-branding-color: #f8fafc;
+    --header-link-color: #cbd5e1;
+    --breadcrumbs-bg: #1e293b;
+    --breadcrumbs-fg: #94a3b8;
+    --breadcrumbs-link-fg: #60a5fa;
+    --breadcrumbs-link-selected-fg: #f8fafc;
+    --link-fg: #60a5fa;       
+    --link-hover-color: var(--secondary);
+    --link-selected-fg: var(--secondary);
+    --button-fg: #ffffff;
+    --button-bg: var(--primary);
+    --button-hover-bg: #1d4ed8;
+    --default-button-bg: var(--secondary);
+    --default-button-hover-bg: #d0157a;
+    --border-color: #334155;
+    --hairline-color: #1e293b;
+    --darkened-bg: #1e293b;
+    --selected-bg: #1e293b;
+    --selected-row: #334155;
+}
+
+/* Base Typography Overrides */
 body {
     font-family: var(--font-family-primary);
-    background: #f4f7f6;
 }
-
-/* Header Styling */
-#header {
-    background: var(--header-bg);
-    color: var(--header-link-color);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    padding: 10px 20px;
-}
-
-#header a:link, #header a:visited {
-    color: var(--header-link-color);
-}
-
-#branding h1 {
+h1, h2, h3, h4, h5 {
     font-family: 'Poppins', sans-serif;
-    color: var(--primary);
+}
+#branding h1 {
     font-weight: 700;
 }
-
-#branding h1 a:link, #branding h1 a:visited {
-    color: var(--primary);
-}
-
-/* Breadcrumbs */
-div.breadcrumbs {
-    background: var(--breadcrumbs-bg);
-    color: var(--breadcrumbs-fg);
-    border-bottom: 1px solid #eaeaea;
-    padding: 12px 20px;
-    font-weight: 500;
-}
-div.breadcrumbs a {
-    color: var(--breadcrumbs-link-fg);
-}
-
-/* Buttons */
 .button, input[type=submit], input[type=button], .submit-row input, a.button {
-    background: var(--button-bg);
-    border-radius: 6px;
     font-family: 'Poppins', sans-serif;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border-radius: 6px;
     transition: all 0.2s;
     border: none;
 }
-.button:hover, input[type=submit]:hover, input[type=button]:hover {
-    background: var(--button-hover-bg);
+.module {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
 }
-.button.default, input[type=submit].default, .submit-row input.default {
-    background: var(--default-button-bg);
-}
-.button.default:hover, input[type=submit].default:hover {
-    background: var(--default-button-hover-bg);
-}
-
-/* Dashboard Modules */
 .module h2, .module caption, .inline-group h2 {
     background: var(--primary);
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    border-radius: 4px 4px 0 0;
-}
-.module {
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border: 1px solid #eaeaea;
-}
-
-/* Typography Overrides */
-h1, h2, h3, h4, h5 {
-    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
 }
