@@ -1,0 +1,77 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        body.login {
+            background: linear-gradient(135deg, #1B4FA8 0%, #E8198A 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #header {
+            display: none;
+        }
+        #content {
+            padding: 3rem !important;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            margin: 0;
+        }
+        .login-branding {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-branding h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #1B4FA8;
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        .login-branding p {
+            font-family: 'Inter', sans-serif;
+            color: #666;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .submit-row input[type="submit"] {
+            background: #E8198A !important;
+            border-radius: 0.5rem !important;
+            padding: 0.75rem !important;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        .submit-row input[type="submit"]:hover {
+            background: #d0157a !important;
+            transform: translateY(-1px);
+        }
+        .form-row label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #333;
+        }
+        .form-row input {
+            border-radius: 0.5rem !important;
+            border: 1px solid #ccc !important;
+            padding: 0.75rem !important;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="login-branding">
+    <h1>📚 LCU Book Bank</h1>
+    <p>Admin Dashboard Login</p>
+</div>
+{{ block.super }}
+{% endblock %}
