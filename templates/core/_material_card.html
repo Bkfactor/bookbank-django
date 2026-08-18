@@ -17,7 +17,7 @@
     {% if avg %}<span class="badge badge--rating">⭐ {{ avg }} ({{ count }})</span>{% endif %}
     {% endwith %}
   </div>
-  <div class="material-card__actions">
+  <div class="material-card__actions" style="align-items: flex-start;">
     {% with file_link=resource.get_file_url %}
     {% if file_link %}
     <a href="{{ file_link }}" target="_blank" rel="noopener" class="btn btn--primary btn--sm">Open →</a>
@@ -25,9 +25,35 @@
     <span class="btn btn--primary btn--sm" style="opacity:.4;cursor:not-allowed;">No File</span>
     {% endif %}
     {% endwith %}
-    <button class="btn btn--ghost btn--sm"
-            onclick="openReview({{ resource.id }}, '{{ resource.title|escapejs }}')">
-      ⭐ Rate
-    </button>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button class="btn btn--ghost btn--sm"
+              onclick="openRating({{ resource.id }}, '{{ resource.title|escapejs }}')">
+        ⭐ Rate
+      </button>
+      <button class="btn btn--ghost btn--sm"
+              onclick="openReviewText({{ resource.id }}, '{{ resource.title|escapejs }}')">
+        📝 Write Review
+      </button>
+      {% if resource.review_count > 0 %}
+      <button class="btn btn--ghost btn--sm"
+              onclick="const el = document.getElementById('reviews-{{ resource.id }}'); el.style.display = el.style.display === 'none' ? 'block' : 'none';">
+        💬 Read Reviews ({{ resource.review_count }})
+      </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Collapsible Reviews Section -->
+  <div id="reviews-{{ resource.id }}" style="display:none; margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1rem;">
+    <h4 style="font-size:.85rem; font-weight:600; color:var(--navy); margin-bottom:.75rem;">Student Reviews</h4>
+    {% for review in resource.approved_reviews %}
+    <div style="background:var(--surface); padding:.75rem 1rem; border-radius:var(--radius-sm); border:1.5px solid var(--border); margin-bottom:.5rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.3rem;">
+        <span style="font-weight:600; font-size:.85rem; color:var(--navy);">{{ review.reviewer_name }}</span>
+        <span style="font-size:.75rem; color:var(--text-3);">{{ review.created_at|date:"M j, Y" }}</span>
+      </div>
+      <p style="font-size:.85rem; color:var(--text); margin:0; line-height:1.4;">{{ review.comment }}</p>
+    </div>
+    {% endfor %}
   </div>
 </div>

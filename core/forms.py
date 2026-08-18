@@ -1,6 +1,5 @@
 from django import forms
-from .models import Resource, Review, Faculty, Department
-
+from .models import Resource, Review, Faculty, Department, Feedback
 
 class SubmitResourceForm(forms.ModelForm):
     """
@@ -88,9 +87,25 @@ class SubmitResourceForm(forms.ModelForm):
 class ReviewForm(forms.ModelForm):
     class Meta:
         model  = Review
-        fields = ["rating", "comment"]
-        labels = {"rating": "Your Rating", "comment": "Comment (optional)"}
+        fields = ["reviewer_name", "comment"]
+        labels = {"reviewer_name": "Your Name", "comment": "Review"}
         widgets = {
+            "reviewer_name": forms.TextInput(attrs={"placeholder": "e.g. John Doe or Anonymous"}),
             "comment": forms.Textarea(attrs={"rows": 3,
                 "placeholder": "Tell students why this material is useful…"})
+        }
+
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ["name", "email", "category", "message"]
+        labels = {
+            "name": "Your Name",
+            "email": "Email Address (optional, for follow-up)",
+            "category": "What can we help you with?",
+            "message": "Details"
+        }
+        widgets = {
+            "message": forms.Textarea(attrs={"rows": 4, "placeholder": "Please provide details..."}),
         }

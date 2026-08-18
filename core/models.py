@@ -101,14 +101,17 @@ class Resource(models.Model):
         return self.title
 
     def avg_rating(self):
-        reviews = self.reviews.all()
-        if not reviews.exists():
+        ratings = self.ratings.all()
+        if not ratings.exists():
             return None
-        total = sum(r.rating for r in reviews)
-        return round(total / reviews.count(), 1)
+        total = sum(r.rating for r in ratings)
+        return round(total / ratings.count(), 1)
 
     def review_count(self):
-        return self.reviews.count()
+        return self.reviews.filter(status="approved").count()
+
+    def approved_reviews(self):
+        return self.reviews.filter(status="approved").order_by("-created_at")
 
     def type_emoji(self):
         emojis = {
@@ -126,13 +129,13 @@ class Resource(models.Model):
         return self.drive_url or ""
 
 
-class Review(models.Model):
+class Rating(models.Model):
     RATING_CHOICES = [(i, f"{i} star{'s' if i > 1 else ''}") for i in range(1, 6)]
 
     resource   = models.ForeignKey(Resource, on_delete=models.CASCADE,
-                                   related_name="reviews")
+                                   related_name="ratings")
     rating     = models.IntegerField(choices=RATING_CHOICES)
-    comment    = models.TextField(blank=True)
+    session_key = models.CharField(max_length=40, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -140,3 +143,52 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.rating}★ on '{self.resource.title}'"
+
+
+class Review(models.Model):
+    STATUS_CHOICES = [
+        ("pending",  "⏳ Pending"),
+        ("approved", "✅ Approved"),
+        ("rejected", "❌ Rejected"),
+    ]
+    resource   = models.ForeignKey(Resource, on_delete=models.CASCADE,
+                                   related_name="reviews")
+    reviewer_name = models.CharField(max_length=150, default="Anonymous")
+    comment    = models.TextField()
+    status     = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Review on '{self.resource.title}' by {self.reviewer_name}"
+
+
+class Feedback(models.Model):
+    CATEGORY_CHOICES = [
+        ("missing", "Missing Material"),
+        ("issue", "Academic Issue"),
+        ("suggestion", "Suggestion"),
+        ("complaint", "Complaint"),
+        ("other", "Other"),
+    ]
+    STATUS_CHOICES = [
+        ("pending", "⏳ Pending"),
+        ("in_progress", "🔄 In Progress"),
+        ("resolved", "✅ Resolved"),
+    ]
+    name = models.CharField(max_length=150)
+    email = models.EmailField(blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name_plural = "Feedback"
+
+    def __str__(self):
+        return f"{self.get_category_display()} from {self.name}"
+

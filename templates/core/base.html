@@ -49,7 +49,7 @@
           <h4>Contribute</h4>
           <ul>
             <li><a href="{% url 'upload' %}">Submit Material</a></li>
-            <li><a href="mailto:leadcitybookbank@gmail.com">Contact Us</a></li>
+            <li><a href="{% url 'submit_feedback' %}">Contact Us</a></li>
           </ul>
         </div>
         <div class="footer__col">
@@ -65,6 +65,114 @@
       </div>
     </div>
   </footer>
+
+  <!-- Rating Modal -->
+  <div class="modal-overlay" id="rating-modal" onclick="if(event.target===this)closeRating()">
+    <div class="modal">
+      <div class="modal__title">⭐ Rate this material</div>
+      <p class="modal__sub">Your rating helps other students find what's worth downloading.</p>
+      <div class="modal__material" id="rating-material-title"></div>
+      <form id="rating-form">
+        {% csrf_token %}
+        <div style="display:flex;gap:.5rem;margin-bottom:1.5rem;">
+          {% for i in "12345" %}
+          <label style="cursor:pointer;">
+            <input type="radio" name="rating" value="{{ i }}" style="display:none;" required />
+            <span class="star-btn" data-val="{{ i }}">★</span>
+          </label>
+          {% endfor %}
+        </div>
+        <div class="modal__actions">
+          <button type="submit" class="btn btn--primary" style="flex:1">Submit Rating →</button>
+          <button type="button" class="btn btn--ghost" onclick="closeRating()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="modal-overlay" id="review-text-modal" onclick="if(event.target===this)closeReviewText()">
+    <div class="modal">
+      <div class="modal__title">📝 Write a Review</div>
+      <p class="modal__sub">Share your thoughts on this material. Reviews are moderated before publishing.</p>
+      <div class="modal__material" id="review-text-material-title"></div>
+      <form id="review-text-form">
+        {% csrf_token %}
+        <div class="form-group" style="margin-bottom:1rem;">
+          <input type="text" name="reviewer_name" placeholder="Your Name (e.g. John Doe or Anonymous)" required style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;font-family:var(--font-body);font-size:.875rem;" />
+        </div>
+        <textarea name="comment" placeholder="Tell students why this material is useful…" required style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;font-family:var(--font-body);font-size:.875rem;resize:vertical;min-height:80px;margin-bottom:1rem;"></textarea>
+        <div class="modal__actions">
+          <button type="submit" class="btn btn--primary" style="flex:1">Submit Review →</button>
+          <button type="button" class="btn btn--ghost" onclick="closeReviewText()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  let activeResourceId = null;
+
+  function openRating(id, title) {
+    activeResourceId = id;
+    document.getElementById("rating-material-title").textContent = title;
+    document.getElementById("rating-modal").classList.add("open");
+  }
+  function closeRating() {
+    document.getElementById("rating-modal").classList.remove("open");
+    activeResourceId = null;
+  }
+
+  function openReviewText(id, title) {
+    activeResourceId = id;
+    document.getElementById("review-text-material-title").textContent = title;
+    document.getElementById("review-text-modal").classList.add("open");
+  }
+  function closeReviewText() {
+    document.getElementById("review-text-modal").classList.remove("open");
+    activeResourceId = null;
+  }
+
+  // Star hover styling
+  document.querySelectorAll(".star-btn").forEach(star => {
+    star.style.cssText = "font-size:1.8rem;color:var(--border-dark);cursor:pointer;transition:color .1s;";
+    star.addEventListener("mouseover", () => {
+      document.querySelectorAll(".star-btn").forEach((s, i) => {
+        s.style.color = i <= parseInt(star.dataset.val) - 1 ? "var(--gold)" : "var(--border-dark)";
+      });
+    });
+  });
+
+  document.getElementById("rating-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    const res  = await fetch(`/rating/${activeResourceId}/`, { method: "POST", body: data });
+    const json = await res.json();
+    if (json.ok) {
+      closeRating();
+      alert(`Thanks! Average rating is now ⭐ ${json.avg}.`);
+      location.reload();
+    } else {
+      alert("Something went wrong. Please try again.");
+    }
+  });
+
+  document.getElementById("review-text-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    const res  = await fetch(`/review/${activeResourceId}/`, { method: "POST", body: data });
+    const json = await res.json();
+    if (json.ok) {
+      closeReviewText();
+      alert(json.msg);
+    } else {
+      alert("Something went wrong. Please try again.");
+    }
+  });
+  </script>
+
 
   {% block extra_js %}{% endblock %}
 </body>

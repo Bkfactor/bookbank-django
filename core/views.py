@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Avg
 from django.http import JsonResponse
-from .models import Faculty, Department, Resource, Review
-from .forms import SubmitResourceForm, ReviewForm
+from .models import Faculty, Department, Resource, Review, Rating, Feedback
+from .forms import SubmitResourceForm, ReviewForm, FeedbackForm
 import cloudinary.uploader
 
 def home(request):
@@ -99,6 +99,28 @@ def upload_success(request):
     return render(request, "core/upload_success.html")
 
 
+def submit_rating(request, resource_id):
+    if request.method == "POST":
+        resource = get_object_or_404(Resource, id=resource_id, status="approved")
+        try:
+            rating_val = int(request.POST.get("rating"))
+            if rating_val < 1 or rating_val > 5:
+                return JsonResponse({"ok": False}, status=400)
+        except (ValueError, TypeError):
+            return JsonResponse({"ok": False}, status=400)
+            
+        if not request.session.session_key:
+            request.session.create()
+        session_key = request.session.session_key
+        
+        Rating.objects.update_or_create(
+            resource=resource,
+            session_key=session_key,
+            defaults={"rating": rating_val}
+        )
+        return JsonResponse({"ok": True, "avg": resource.avg_rating()})
+    return JsonResponse({"ok": False}, status=400)
+
 def submit_review(request, resource_id):
     resource = get_object_or_404(Resource, id=resource_id, status="approved")
     if request.method == "POST":
@@ -106,12 +128,20 @@ def submit_review(request, resource_id):
         if form.is_valid():
             review = form.save(commit=False)
             review.resource = resource
+            review.status = "pending"
             review.save()
-            return JsonResponse({"ok": True,
-                                 "avg": resource.avg_rating(),
-                                 "count": resource.review_count()})
+            return JsonResponse({"ok": True, "msg": "Review submitted and is awaiting moderation."})
     return JsonResponse({"ok": False}, status=400)
 
+def feedback_view(request):
+    if request.method == "POST":
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, "core/feedback_success.html")
+    else:
+        form = FeedbackForm()
+    return render(request, "core/feedback.html", {"form": form})
 
 def load_departments(request):
     """AJAX: return departments for a faculty (for the upload form dropdown)."""

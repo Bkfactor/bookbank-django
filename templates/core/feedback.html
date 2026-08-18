@@ -1,0 +1,90 @@
+{% extends "core/base.html" %}
+{% block title %}Submit Feedback{% endblock %}
+
+{% block content %}
+<div class="upload-hero">
+  <div class="container upload-hero__inner">
+    <h1 class="upload-hero__title">Need help or can't find something?</h1>
+    <p class="upload-hero__sub">Let us know what you're looking for, report an academic issue, suggest an improvement, or tell us about a missing material.</p>
+  </div>
+</div>
+
+<div class="container" style="padding-top:3rem;padding-bottom:4rem;">
+  <div style="max-width:680px;margin:0 auto;">
+    {% if form.errors %}
+    <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;color:#991b1b;font-size:.875rem;">
+      ⚠️ Please fix the errors below before submitting.
+    </div>
+    {% endif %}
+
+    <form method="post" id="submit-form">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label class="form-label">Your Name *</label>
+        {{ form.name }}
+        {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email <span style="opacity:.5;font-weight:400;">(optional — for follow-up)</span></label>
+        {{ form.email }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">What can we help you with? *</label>
+        {{ form.category }}
+        {% if form.category.errors %}<p class="form-error">{{ form.category.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Details *</label>
+        {{ form.message }}
+        {% if form.message.errors %}<p class="form-error">{{ form.message.errors.0 }}</p>{% endif %}
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--lg" style="width:100%;margin-top:.5rem;">
+        Submit Feedback →
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label {
+    display: block;
+    font-size: .85rem; font-weight: 600;
+    color: var(--navy);
+    margin-bottom: .4rem;
+  }
+  .form-hint { font-size: .78rem; color: var(--text-3); margin-top: .35rem; }
+  .form-error { font-size: .78rem; color: var(--red); margin-top: .3rem; }
+
+  /* Style all form inputs uniformly */
+  #submit-form input[type="text"],
+  #submit-form input[type="email"],
+  #submit-form select,
+  #submit-form textarea {
+    width: 100%;
+    padding: .75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: .9rem;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  #submit-form input:focus,
+  #submit-form select:focus,
+  #submit-form textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(27,79,168,.12);
+  }
+  #submit-form select { appearance: none; cursor: pointer; }
+</style>
+{% endblock %}

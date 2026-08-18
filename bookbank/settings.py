@@ -22,6 +22,7 @@ CSRF_TRUSTED_ORIGINS = config(
 
 # ── Apps ──────────────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
+    "unfold",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -123,3 +124,9 @@ USE_TZ = True
 ADMIN_SITE_HEADER = "LCU Book Bank · Admin"
 ADMIN_SITE_TITLE = "Book Bank Admin"
 ADMIN_INDEX_TITLE = "Resource Management"
+
+UNFOLD = {
+    "SITE_TITLE": "Book Bank Admin",
+    "SITE_HEADER": "LCU Book Bank",
+    "DASHBOARD_CALLBACK": "core.dashboard.dashboard_callback",
+}

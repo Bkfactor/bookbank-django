@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block title %}Feedback Received{% endblock %}
+
+{% block content %}
+<div class="upload-hero" style="min-height:60vh;display:flex;align-items:center;text-align:center;">
+  <div class="container upload-hero__inner">
+    <div style="font-size:4rem;margin-bottom:1rem;">✅</div>
+    <h1 class="upload-hero__title" style="margin-bottom:1rem;">Thank you for your feedback!</h1>
+    <p class="upload-hero__sub" style="max-width:500px;margin:0 auto 2rem;">
+      Your submission has been received. Our team will review it shortly.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn--primary">← Back to Home</a>
+  </div>
+</div>
+{% endblock %}
