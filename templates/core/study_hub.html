@@ -63,17 +63,25 @@
     <!-- Media Section -->
     <div style="flex: 1; background: var(--bg-card, #fff); border-radius: var(--radius-md, 8px); padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border);">
       <h3 style="margin-top: 0; color: var(--text-dark);">🎧 Ambient Sounds</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Pick your focus background stream.</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Pick your focus background stream, or paste your own!</p>
 
-      <select id="stream-select" onchange="changeStream()" style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; margin-bottom: 1rem; font-family: inherit;">
-        <option value="jfKfPfyJRdk">Lofi Girl (Beats to relax/study to)</option>
-        <option value="4xDzrJKXOOY">Synthwave / Chillwave Radio</option>
-        <option value="mPZkdNFkNps">Cafe Ambience + Jazz</option>
-        <option value="nDq6TstdEi8">Heavy Rain & Thunder</option>
-      </select>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+        <select id="stream-select" onchange="changeStream()" style="flex: 1; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit;">
+          <option value="jfKfPfyJRdk">Lofi Girl (Beats to relax/study to)</option>
+          <option value="lTRiuFIWV54">Synthwave Radio</option>
+          <option value="BOYwO1I2590">Cafe Ambience + Jazz</option>
+          <option value="q76bMs-NwRk">Heavy Rain & Thunder</option>
+          <option value="custom">-- Custom YouTube Link --</option>
+        </select>
+      </div>
+
+      <div id="custom-url-group" style="display: none; margin-bottom: 1rem;">
+        <input type="text" id="custom-yt-url" placeholder="Paste YouTube link here..." style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit;">
+        <button onclick="loadCustomStream()" class="btn btn--ghost" style="width: 100%; margin-top: 0.5rem; padding: 0.5rem; border: 1px solid var(--border);">Load Custom Video</button>
+      </div>
 
       <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
-        <iframe id="yt-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="yt-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/jfKfPfyJRdk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
 
@@ -184,7 +192,33 @@ function requestNotify() {
 function changeStream() {
     const select = document.getElementById('stream-select');
     const iframe = document.getElementById('yt-iframe');
-    iframe.src = `https://www.youtube.com/embed/${select.value}?autoplay=1`;
+    const customGroup = document.getElementById('custom-url-group');
+
+    if (select.value === 'custom') {
+        customGroup.style.display = 'block';
+    } else {
+        customGroup.style.display = 'none';
+        iframe.src = `https://www.youtube.com/embed/${select.value}`;
+    }
+}
+
+function loadCustomStream() {
+    const input = document.getElementById('custom-yt-url').value;
+    const iframe = document.getElementById('yt-iframe');
+    
+    // Extract video ID from youtube url
+    let videoId = '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = input.match(regExp);
+
+    if (match && match[2].length === 11) {
+        videoId = match[2];
+    } else {
+        alert("Please enter a valid YouTube URL");
+        return;
+    }
+
+    iframe.src = `https://www.youtube.com/embed/${videoId}`;
 }
 
 // Initial setup
