@@ -1,0 +1,164 @@
+{% extends "core/base.html" %}
+
+{% block title %}CGPA Calculator{% endblock %}
+
+{% block content %}
+<main class="container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+  <div style="max-width: 800px; margin: 0 auto; background: var(--bg-card, #fff); border-radius: var(--radius-md, 8px); padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <h1 style="margin-bottom: 1rem; color: var(--text-dark, #0c1b33);">🎓 CGPA Calculator</h1>
+    <p style="margin-bottom: 2rem; color: var(--text-muted, #666); line-height: 1.6;">
+      Calculate your Grade Point Average instantly. 
+      <strong style="color: #d9534f;">For your privacy and security, no data entered here is saved to our servers.</strong>
+      It is calculated entirely on your device.
+    </p>
+
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;" id="courses-table">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border, #eee); text-align: left;">
+            <th style="padding: 0.75rem;">Course Code (Optional)</th>
+            <th style="padding: 0.75rem;">Credit Units</th>
+            <th style="padding: 0.75rem;">Grade</th>
+            <th style="padding: 0.75rem; text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="course-rows">
+          <!-- Rows will be injected here via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+      <button class="btn btn--ghost" id="add-row-btn" style="border: 1px solid var(--border);">+ Add Course</button>
+      <button class="btn btn--primary" id="calculate-btn">Calculate GPA</button>
+      <button class="btn btn--ghost" id="reset-btn" style="color: #d9534f; border-color: #d9534f;">Reset</button>
+    </div>
+
+    <!-- Results Section -->
+    <div id="result-section" style="display: none; padding: 1.5rem; background: var(--bg-light, #f8f9fa); border-radius: 8px; border: 1px solid var(--border);">
+      <h3 style="margin-top: 0; color: var(--text-dark);">Calculation Results</h3>
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+        <div style="flex: 1; min-width: 120px; text-align: center; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+          <div style="font-size: 0.9rem; color: var(--text-muted);">Total Units</div>
+          <div style="font-size: 1.5rem; font-weight: bold; color: var(--text-dark);" id="res-units">0</div>
+        </div>
+        <div style="flex: 1; min-width: 120px; text-align: center; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+          <div style="font-size: 0.9rem; color: var(--text-muted);">Total Points</div>
+          <div style="font-size: 1.5rem; font-weight: bold; color: var(--text-dark);" id="res-points">0</div>
+        </div>
+        <div style="flex: 1; min-width: 120px; text-align: center; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-left: 4px solid var(--primary, #0056b3);">
+          <div style="font-size: 0.9rem; color: var(--text-muted);">GPA</div>
+          <div style="font-size: 1.8rem; font-weight: bold; color: var(--primary, #0056b3);" id="res-gpa">0.00</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const tbody = document.getElementById("course-rows");
+    const addRowBtn = document.getElementById("add-row-btn");
+    const calcBtn = document.getElementById("calculate-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const resultSection = document.getElementById("result-section");
+    
+    // Using standard 5.0 scale.
+    const gradeScale = {
+        'A': 5,
+        'B': 4,
+        'C': 3,
+        'D': 2,
+        'E': 1,
+        'F': 0
+    };
+
+    function createRow() {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td style="padding: 0.75rem;">
+                <input type="text" placeholder="e.g. GST101" class="course-code" style="width: 100%; padding: 0.5rem; border: 1.5px solid #e2e8f0; border-radius: 4px; font-family: inherit;">
+            </td>
+            <td style="padding: 0.75rem;">
+                <input type="number" min="1" max="10" placeholder="Units" class="course-units" style="width: 100%; padding: 0.5rem; border: 1.5px solid #e2e8f0; border-radius: 4px; font-family: inherit;">
+            </td>
+            <td style="padding: 0.75rem;">
+                <select class="course-grade" style="width: 100%; padding: 0.5rem; border: 1.5px solid #e2e8f0; border-radius: 4px; font-family: inherit;">
+                    <option value="" disabled selected>Grade</option>
+                    <option value="A">A (70-100)</option>
+                    <option value="B">B (60-69)</option>
+                    <option value="C">C (50-59)</option>
+                    <option value="D">D (45-49)</option>
+                    <option value="E">E (40-44)</option>
+                    <option value="F">F (0-39)</option>
+                </select>
+            </td>
+            <td style="padding: 0.75rem; text-align: center;">
+                <button type="button" class="btn btn--ghost remove-btn" style="padding: 0.2rem 0.5rem; color: #d9534f; border: none; cursor: pointer; font-size: 1.2rem; background: transparent;">&times;</button>
+            </td>
+        `;
+        
+        tr.querySelector(".remove-btn").addEventListener("click", () => {
+            tr.remove();
+            if (tbody.children.length === 0) {
+                createRow(); // Always keep at least one row
+            }
+        });
+        
+        tbody.appendChild(tr);
+    }
+
+    // Initialize with 5 empty rows
+    for(let i=0; i<5; i++) {
+        createRow();
+    }
+
+    addRowBtn.addEventListener("click", createRow);
+
+    resetBtn.addEventListener("click", () => {
+        tbody.innerHTML = "";
+        for(let i=0; i<5; i++) {
+            createRow();
+        }
+        resultSection.style.display = "none";
+    });
+
+    calcBtn.addEventListener("click", () => {
+        let totalUnits = 0;
+        let totalPoints = 0;
+        let validCourses = 0;
+
+        const rows = tbody.querySelectorAll("tr");
+        rows.forEach(row => {
+            const unitsVal = row.querySelector(".course-units").value;
+            const gradeVal = row.querySelector(".course-grade").value;
+
+            if (unitsVal && gradeVal) {
+                const units = parseFloat(unitsVal);
+                const gradePoint = gradeScale[gradeVal];
+                
+                totalUnits += units;
+                totalPoints += (units * gradePoint);
+                validCourses++;
+            }
+        });
+
+        if (validCourses === 0) {
+            alert("Please enter units and grades for at least one course to calculate.");
+            return;
+        }
+
+        const gpa = totalPoints / totalUnits;
+
+        document.getElementById("res-units").textContent = totalUnits;
+        document.getElementById("res-points").textContent = totalPoints;
+        document.getElementById("res-gpa").textContent = gpa.toFixed(2);
+        
+        resultSection.style.display = "block";
+    });
+});
+</script>
+{% endblock %}

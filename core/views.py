@@ -149,3 +149,8 @@ def load_departments(request):
     departments = Department.objects.filter(faculty_id=faculty_id)\
                                     .values("id", "name")
     return JsonResponse(list(departments), safe=False)
+
+
+def cgpa_calculator(request):
+    """A completely client-side CGPA calculator. No data saved."""
+    return render(request, "core/cgpa_calculator.html")
