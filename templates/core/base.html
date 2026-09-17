@@ -21,7 +21,7 @@
         <a href="{% url 'home' %}#faculties">Faculties</a>
         <a href="{% url 'home' %}#levels">By Level</a>
         <a href="{% url 'search' %}" {% if request.resolver_match.url_name == 'search' %}class="active"{% endif %}>Search</a>
-        <a href="{% url 'cgpa_calculator' %}" {% if request.resolver_match.url_name == 'cgpa_calculator' %}class="active"{% endif %}>CGPA Calc</a>
+        <a href="{% url 'tools_hub' %}" {% if 'tools' in request.path %}class="active"{% endif %}>Student Tools</a>
         <a href="{% url 'upload' %}" class="navbar__cta">+ Submit Material</a>
       </nav>
     </div>

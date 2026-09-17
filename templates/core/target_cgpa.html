@@ -1,0 +1,97 @@
+{% extends "core/base.html" %}
+
+{% block title %}Target CGPA Calculator{% endblock %}
+
+{% block content %}
+<main class="container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+  <div style="max-width: 600px; margin: 0 auto; background: var(--bg-card, #fff); border-radius: var(--radius-md, 8px); padding: 2.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    
+    <a href="{% url 'tools_hub' %}" style="display: inline-block; margin-bottom: 1.5rem; color: var(--primary, #0056b3); text-decoration: none; font-size: 0.9rem;">
+      &larr; Back to Tools
+    </a>
+
+    <h1 style="margin-top: 0; margin-bottom: 0.5rem; color: var(--text-dark, #0c1b33);">🎯 Target CGPA Calculator</h1>
+    <p style="margin-bottom: 2rem; color: var(--text-muted, #666); line-height: 1.6;">
+      Find out exactly what semester GPA you need to hit your dream CGPA. 
+      <strong style="color: #d9534f;">Calculated locally. No data saved.</strong>
+    </p>
+
+    <form id="target-cgpa-form" onsubmit="event.preventDefault(); calculateTarget();">
+      
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Current CGPA</label>
+        <input type="number" step="0.01" min="0" max="5.0" id="current-cgpa" required placeholder="e.g. 4.32" style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Total Units Completed</label>
+        <input type="number" step="1" min="1" id="completed-units" required placeholder="e.g. 60" style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+        <small style="color: #666; display: block; margin-top: 0.25rem;">Total credit units you have completed so far.</small>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Target CGPA</label>
+        <input type="number" step="0.01" min="0" max="5.0" id="target-cgpa" required placeholder="e.g. 4.50" style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+      </div>
+
+      <div style="margin-bottom: 2rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark);">Upcoming Semester Units</label>
+        <input type="number" step="1" min="1" id="upcoming-units" required placeholder="e.g. 15" style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 1rem;">
+        <small style="color: #666; display: block; margin-top: 0.25rem;">Total credit units you are taking this semester.</small>
+      </div>
+
+      <button type="submit" class="btn btn--primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">Calculate Required GPA</button>
+    </form>
+
+    <!-- Results Section -->
+    <div id="result-section" style="display: none; margin-top: 2rem; padding: 1.5rem; background: var(--bg-light, #f8f9fa); border-radius: 8px; border: 1px solid var(--border); text-align: center;">
+      <h3 style="margin-top: 0; color: var(--text-dark);">You need a semester GPA of:</h3>
+      <div style="font-size: 3rem; font-weight: bold; color: var(--primary, #0056b3); margin: 1rem 0;" id="req-gpa">0.00</div>
+      
+      <p id="result-message" style="margin: 0; color: var(--text-muted); font-size: 1.05rem; line-height: 1.5;"></p>
+    </div>
+
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function calculateTarget() {
+    const currentCgpa = parseFloat(document.getElementById('current-cgpa').value);
+    const completedUnits = parseFloat(document.getElementById('completed-units').value);
+    const targetCgpa = parseFloat(document.getElementById('target-cgpa').value);
+    const upcomingUnits = parseFloat(document.getElementById('upcoming-units').value);
+
+    // Formula:
+    // Required Points = (Target CGPA * (Completed Units + Upcoming Units)) - (Current CGPA * Completed Units)
+    // Required GPA = Required Points / Upcoming Units
+
+    const currentPoints = currentCgpa * completedUnits;
+    const targetPoints = targetCgpa * (completedUnits + upcomingUnits);
+    const requiredPoints = targetPoints - currentPoints;
+    
+    let requiredGpa = requiredPoints / upcomingUnits;
+    
+    const resultSection = document.getElementById('result-section');
+    const reqGpaDisplay = document.getElementById('req-gpa');
+    const msgDisplay = document.getElementById('result-message');
+
+    resultSection.style.display = 'block';
+
+    if (requiredGpa > 5.0) {
+        reqGpaDisplay.textContent = "Impossible 😞";
+        reqGpaDisplay.style.color = "#d9534f";
+        msgDisplay.textContent = `You would need a ${requiredGpa.toFixed(2)} GPA, but the maximum is 5.0. You might need more semesters to pull it up to a ${targetCgpa.toFixed(2)}.`;
+    } else if (requiredGpa <= 0) {
+        reqGpaDisplay.textContent = "Easy! 🎉";
+        reqGpaDisplay.style.color = "#28a745";
+        msgDisplay.textContent = `Even with a 0.00 this semester, you'd still stay above ${targetCgpa.toFixed(2)}. You have plenty of breathing room!`;
+    } else {
+        reqGpaDisplay.textContent = requiredGpa.toFixed(2);
+        reqGpaDisplay.style.color = "var(--primary, #0056b3)";
+        msgDisplay.textContent = `To reach a ${targetCgpa.toFixed(2)} CGPA, you must average at least a ${requiredGpa.toFixed(2)} GPA across your ${upcomingUnits} units this semester. You've got this! 💪`;
+    }
+}
+</script>
+{% endblock %}

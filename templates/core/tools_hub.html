@@ -1,0 +1,50 @@
+{% extends "core/base.html" %}
+
+{% block title %}Student Tools{% endblock %}
+
+{% block content %}
+<main class="container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <h1 style="color: var(--text-dark, #0c1b33); font-size: 2.5rem; margin-bottom: 0.5rem;">🛠️ Student Tools</h1>
+    <p style="color: var(--text-muted, #666); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+      A growing collection of lightweight, privacy-first academic tools to help you succeed. 
+      All tools run directly on your device—no data is saved to our servers.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
+    
+    <!-- CGPA Calculator -->
+    <a href="{% url 'cgpa_calculator' %}" style="display: block; text-decoration: none; background: var(--bg-card, #fff); border-radius: var(--radius-md, 8px); padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border, #eee); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
+      <div style="font-size: 2rem; margin-bottom: 1rem;">🎓</div>
+      <h3 style="color: var(--text-dark, #0c1b33); margin-top: 0; margin-bottom: 0.5rem;">CGPA Calculator</h3>
+      <p style="color: var(--text-muted, #666); font-size: 0.95rem; margin: 0; line-height: 1.5;">
+        Instantly calculate your Grade Point Average for the semester. Add your courses, units, and grades.
+      </p>
+    </a>
+
+    <!-- Target CGPA Calculator -->
+    <a href="{% url 'target_cgpa' %}" style="display: block; text-decoration: none; background: var(--bg-card, #fff); border-radius: var(--radius-md, 8px); padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border, #eee); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.05)';">
+      <div style="font-size: 2rem; margin-bottom: 1rem;">🎯</div>
+      <h3 style="color: var(--text-dark, #0c1b33); margin-top: 0; margin-bottom: 0.5rem;">Target CGPA Calculator</h3>
+      <p style="color: var(--text-muted, #666); font-size: 0.95rem; margin: 0; line-height: 1.5;">
+        Want to hit a specific CGPA? Find out exactly what semester GPA you need to reach your goal.
+      </p>
+    </a>
+
+    <!-- Coming Soon placeholders -->
+    <div style="background: var(--bg-light, #f8f9fa); border-radius: var(--radius-md, 8px); padding: 1.5rem; border: 1px dashed var(--border-dark, #ccc); text-align: center; display: flex; flex-direction: column; justify-content: center; opacity: 0.7;">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📝</div>
+      <h3 style="color: var(--text-muted, #666); margin-top: 0; margin-bottom: 0.5rem; font-size: 1.1rem;">Citation Generator</h3>
+      <span style="display: inline-block; background: #e2e8f0; color: #475569; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin: 0 auto;">Coming Soon</span>
+    </div>
+
+    <div style="background: var(--bg-light, #f8f9fa); border-radius: var(--radius-md, 8px); padding: 1.5rem; border: 1px dashed var(--border-dark, #ccc); text-align: center; display: flex; flex-direction: column; justify-content: center; opacity: 0.7;">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+      <h3 style="color: var(--text-muted, #666); margin-top: 0; margin-bottom: 0.5rem; font-size: 1.1rem;">Grade Calculator</h3>
+      <span style="display: inline-block; background: #e2e8f0; color: #475569; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin: 0 auto;">Coming Soon</span>
+    </div>
+
+  </div>
+</main>
+{% endblock %}

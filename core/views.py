@@ -151,6 +151,16 @@ def load_departments(request):
     return JsonResponse(list(departments), safe=False)
 
 
+def tools_hub(request):
+    """Hub page for all student tools."""
+    return render(request, "core/tools_hub.html")
+
+
 def cgpa_calculator(request):
     """A completely client-side CGPA calculator. No data saved."""
     return render(request, "core/cgpa_calculator.html")
+
+
+def target_cgpa(request):
+    """A completely client-side Target CGPA calculator."""
+    return render(request, "core/target_cgpa.html")

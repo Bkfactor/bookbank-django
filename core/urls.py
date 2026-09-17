@@ -11,5 +11,7 @@ urlpatterns = [
     path("rating/<int:resource_id>/", views.submit_rating,   name="submit_rating"),
     path("feedback/",                 views.feedback_view,   name="submit_feedback"),
     path("ajax/departments/",         views.load_departments, name="load_departments"),
+    path("tools/",                    views.tools_hub,       name="tools_hub"),
     path("tools/cgpa-calculator/",    views.cgpa_calculator, name="cgpa_calculator"),
+    path("tools/target-cgpa/",        views.target_cgpa,     name="target_cgpa"),
 ]
