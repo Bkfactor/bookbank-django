@@ -76,8 +76,9 @@
       </div>
 
       <div id="custom-url-group" style="display: none; margin-bottom: 1rem;">
-        <input type="text" id="custom-yt-url" placeholder="Paste YouTube link here..." style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit;">
+        <input type="text" id="custom-yt-url" placeholder="Paste YouTube link (or video ID)..." style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; font-family: inherit;">
         <button onclick="loadCustomStream()" class="btn btn--ghost" style="width: 100%; margin-top: 0.5rem; padding: 0.5rem; border: 1px solid var(--border);">Load Custom Video</button>
+        <small style="color: #d9534f; display: block; margin-top: 0.5rem; line-height: 1.4;">Note: Some music videos and livestreams disable embedding. If you see an error, try another video!</small>
       </div>
 
       <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
@@ -202,23 +203,39 @@ function changeStream() {
     }
 }
 
+function extractYouTubeID(urlStr) {
+    if (!urlStr) return null;
+    urlStr = urlStr.trim();
+    if (urlStr.length === 11 && !urlStr.includes('/')) return urlStr; // Just the ID
+    try {
+        const url = new URL(urlStr);
+        if (url.hostname === 'youtu.be') return url.pathname.slice(1, 12);
+        if (url.hostname.includes('youtube.com')) {
+            if (url.pathname === '/watch') return url.searchParams.get('v');
+            if (url.pathname.startsWith('/embed/')) return url.pathname.split('/')[2];
+            if (url.pathname.startsWith('/shorts/')) return url.pathname.split('/')[2];
+            if (url.pathname.startsWith('/live/')) return url.pathname.split('/')[2];
+        }
+    } catch (e) {
+        // Fallback regex if URL constructor fails
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/|live\/)([^#\&\?]*).*/;
+        const match = urlStr.match(regExp);
+        if (match && match[2].length === 11) return match[2];
+    }
+    return null;
+}
+
 function loadCustomStream() {
     const input = document.getElementById('custom-yt-url').value;
     const iframe = document.getElementById('yt-iframe');
     
-    // Extract video ID from youtube url
-    let videoId = '';
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = input.match(regExp);
+    const videoId = extractYouTubeID(input);
 
-    if (match && match[2].length === 11) {
-        videoId = match[2];
+    if (videoId) {
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
     } else {
-        alert("Please enter a valid YouTube URL");
-        return;
+        alert("Please enter a valid YouTube link or 11-character video ID.");
     }
-
-    iframe.src = `https://www.youtube.com/embed/${videoId}`;
 }
 
 // Initial setup
