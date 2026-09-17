@@ -17,4 +17,5 @@ urlpatterns = [
     path("tools/citation-generator/", views.citation_generator, name="citation_generator"),
     path("tools/flashcards/",         views.flashcards,      name="flashcards"),
     path("tools/exam-tracker/",       views.exam_tracker,    name="exam_tracker"),
+    path("tools/study-hub/",          views.study_hub,       name="study_hub"),
 ]

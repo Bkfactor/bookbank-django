@@ -179,3 +179,8 @@ def flashcards(request):
 def exam_tracker(request):
     """A client-side Exam Tracker with Notifications using localStorage."""
     return render(request, "core/exam_tracker.html")
+
+
+def study_hub(request):
+    """A Pomodoro timer and ambient sound player."""
+    return render(request, "core/study_hub.html")

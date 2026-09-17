@@ -1,0 +1,193 @@
+{% extends "core/base.html" %}
+
+{% block title %}Study Hub{% endblock %}
+
+{% block extra_head %}
+<style>
+  .mode-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .mode-btn.active {
+    background: #e3f2fd;
+    color: var(--primary);
+  }
+  #timer-display {
+    font-size: 6rem;
+    font-weight: bold;
+    font-family: monospace;
+    color: var(--text-dark);
+    margin: 1rem 0;
+    line-height: 1;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+  
+  <a href="{% url 'tools_hub' %}" style="display: inline-block; margin-bottom: 1.5rem; color: var(--primary, #0056b3); text-decoration: none; font-size: 0.9rem;">
+    &larr; Back to Tools
+  </a>
+
+  <div style="display: flex; flex-direction: column; md:flex-direction: row; gap: 2rem; max-width: 1000px; margin: 0 auto;">
+    
+    <!-- Timer Section -->
+    <div style="flex: 1; background: var(--bg-card, #fff); border-radius: var(--radius-md, 8px); padding: 2.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border: 1px solid var(--border);">
+      
+      <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
+        <button class="mode-btn active" id="btn-pomodoro" onclick="setMode('pomodoro')">Pomodoro</button>
+        <button class="mode-btn" id="btn-short" onclick="setMode('short')">Short Break</button>
+        <button class="mode-btn" id="btn-long" onclick="setMode('long')">Long Break</button>
+      </div>
+
+      <div id="timer-display">25:00</div>
+
+      <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;">
+        <button class="btn btn--primary" id="btn-start" onclick="toggleTimer()" style="font-size: 1.2rem; padding: 0.75rem 2.5rem;">Start</button>
+        <button class="btn btn--ghost" id="btn-reset" onclick="resetTimer()" style="font-size: 1.2rem; padding: 0.75rem 1.5rem; border: 1px solid var(--border);">Reset</button>
+      </div>
+      
+      <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-muted);">
+        <button onclick="requestNotify()" style="background:none;border:none;color:var(--primary);cursor:pointer;text-decoration:underline;">Enable Notifications</button> to know when a session ends.
+      </p>
+
+    </div>
+
+    <!-- Media Section -->
+    <div style="flex: 1; background: var(--bg-card, #fff); border-radius: var(--radius-md, 8px); padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border);">
+      <h3 style="margin-top: 0; color: var(--text-dark);">🎧 Ambient Sounds</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Pick your focus background stream.</p>
+
+      <select id="stream-select" onchange="changeStream()" style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; margin-bottom: 1rem; font-family: inherit;">
+        <option value="jfKfPfyJRdk">Lofi Girl (Beats to relax/study to)</option>
+        <option value="4xDzrJKXOOY">Synthwave / Chillwave Radio</option>
+        <option value="mPZkdNFkNps">Cafe Ambience + Jazz</option>
+        <option value="nDq6TstdEi8">Heavy Rain & Thunder</option>
+      </select>
+
+      <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+        <iframe id="yt-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let timerInterval;
+let timeLeft = 25 * 60; // 25 mins in seconds
+let isRunning = false;
+let currentMode = 'pomodoro'; // pomodoro, short, long
+
+const modes = {
+    pomodoro: 25 * 60,
+    short: 5 * 60,
+    long: 15 * 60
+};
+
+const display = document.getElementById('timer-display');
+const btnStart = document.getElementById('btn-start');
+
+function updateDisplay() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    
+    display.textContent = `${minutes}:${seconds}`;
+    document.title = `${minutes}:${seconds} - Study Hub`;
+}
+
+function setMode(mode) {
+    clearInterval(timerInterval);
+    isRunning = false;
+    currentMode = mode;
+    timeLeft = modes[mode];
+    btnStart.textContent = 'Start';
+    
+    // Update active button
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`btn-${mode}`).classList.add('active');
+    
+    updateDisplay();
+}
+
+function toggleTimer() {
+    if (isRunning) {
+        clearInterval(timerInterval);
+        btnStart.textContent = 'Start';
+    } else {
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateDisplay();
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                btnStart.textContent = 'Start';
+                playAlarm();
+            }
+        }, 1000);
+        btnStart.textContent = 'Pause';
+    }
+    isRunning = !isRunning;
+}
+
+function resetTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    timeLeft = modes[currentMode];
+    btnStart.textContent = 'Start';
+    updateDisplay();
+}
+
+function playAlarm() {
+    // Notify
+    if ("Notification" in window && Notification.permission === "granted") {
+        let msg = currentMode === 'pomodoro' ? 'Time for a break! ☕' : 'Break is over. Back to focus! 💪';
+        new Notification("Study Hub", { body: msg, icon: "🎧" });
+    }
+    // Web audio beep
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 880;
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.5);
+    } catch(e) {}
+}
+
+function requestNotify() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(p => {
+            if (p === 'granted') {
+                alert("Notifications enabled! We'll ping you when the timer ends.");
+            }
+        });
+    }
+}
+
+function changeStream() {
+    const select = document.getElementById('stream-select');
+    const iframe = document.getElementById('yt-iframe');
+    iframe.src = `https://www.youtube.com/embed/${select.value}?autoplay=1`;
+}
+
+// Initial setup
+updateDisplay();
+</script>
+{% endblock %}
