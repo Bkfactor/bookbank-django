@@ -88,42 +88,40 @@ No Google Form. No Google Sheet. No editing data.js. No redeployment.
 
 ---
 
-## 🚀 Deploying to Railway (free, takes ~10 mins)
+## 🛠️ Student Tools Toolkit
+
+The Book Bank includes a suite of built-in, privacy-first academic tools for students. These tools run entirely client-side using JavaScript and `localStorage`, ensuring no user data is saved to the backend.
+
+- **CGPA Calculator** (`/tools/cgpa-calculator/`): Instantly calculate semester GPA based on a 5.0 scale.
+- **Target CGPA Calculator** (`/tools/target-cgpa/`): Determines the required semester GPA to reach a target CGPA.
+- **APA Citation Generator** (`/tools/citation-generator/`): Generates APA 7th edition citations for books and websites.
+- **Flashcards** (`/tools/flashcards/`): Create and study custom digital flashcards.
+- **Exam Tracker** (`/tools/exam-tracker/`): Track upcoming deadlines with visual countdowns and browser notifications.
+- **Study Hub** (`/tools/study-hub/`): Pomodoro timer integrated with ambient YouTube streams (e.g., Lofi Girl).
+
+---
+
+## 🚀 Deploying to Vercel
+
+The project is configured for deployment on Vercel.
 
 ### 1. Push to GitHub
 ```bash
-git init
 git add .
-git commit -m "Initial Django build"
-# Create a repo on github.com, then:
-git remote add origin https://github.com/YOUR_USERNAME/bookbank-django.git
-git push -u origin main
+git commit -m "Update"
+git push origin main
 ```
 
-### 2. Deploy on Railway
-1. Go to **railway.app** → New Project → Deploy from GitHub repo
-2. Select your repo
-3. Railway auto-detects Django and runs the `Procfile`
-4. Add a **PostgreSQL** plugin: click `+ New` → Database → PostgreSQL
-5. Railway auto-sets `DATABASE_URL` for you
+### 2. Deploy on Vercel
+1. Go to **vercel.com** → Add New Project
+2. Import your GitHub repository (`bookbank-django`).
+3. Vercel will auto-detect the Django project (assuming you have a `vercel.json` configured).
+4. Add your Environment Variables in the Vercel dashboard:
+   - `SECRET_KEY`
+   - `DEBUG = False`
+   - `ALLOWED_HOSTS = .vercel.app` (or your custom domain)
 
-### 3. Set environment variables on Railway
-In your Railway project → Variables tab, add:
-```
-SECRET_KEY    = (generate one at djecrety.ir)
-DEBUG         = False
-ALLOWED_HOSTS = your-app-name.up.railway.app
-```
-
-### 4. Re-seed on production
-After deploy, open Railway shell:
-```bash
-python manage.py seed_faculties
-python manage.py createsuperuser
-```
-
-Your site is now live at `your-app-name.up.railway.app`.
-Point your custom domain in Railway's settings.
+*Note: Vercel offers serverless functions, meaning SQLite is read-only in production. For a fully functional database on Vercel, connect a PostgreSQL database (like Supabase or Neon) and set your `DATABASE_URL`.*
 
 ---
 
