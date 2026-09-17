@@ -164,3 +164,8 @@ def cgpa_calculator(request):
 def target_cgpa(request):
     """A completely client-side Target CGPA calculator."""
     return render(request, "core/target_cgpa.html")
+
+
+def citation_generator(request):
+    """A client-side APA Citation Generator."""
+    return render(request, "core/citation_generator.html")

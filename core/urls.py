@@ -14,4 +14,5 @@ urlpatterns = [
     path("tools/",                    views.tools_hub,       name="tools_hub"),
     path("tools/cgpa-calculator/",    views.cgpa_calculator, name="cgpa_calculator"),
     path("tools/target-cgpa/",        views.target_cgpa,     name="target_cgpa"),
+    path("tools/citation-generator/", views.citation_generator, name="citation_generator"),
 ]
