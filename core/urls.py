@@ -15,4 +15,6 @@ urlpatterns = [
     path("tools/cgpa-calculator/",    views.cgpa_calculator, name="cgpa_calculator"),
     path("tools/target-cgpa/",        views.target_cgpa,     name="target_cgpa"),
     path("tools/citation-generator/", views.citation_generator, name="citation_generator"),
+    path("tools/flashcards/",         views.flashcards,      name="flashcards"),
+    path("tools/exam-tracker/",       views.exam_tracker,    name="exam_tracker"),
 ]

@@ -1,0 +1,335 @@
+{% extends "core/base.html" %}
+
+{% block title %}Flashcards{% endblock %}
+
+{% block extra_head %}
+<style>
+  .fc-view { display: none; }
+  .fc-view.active { display: block; }
+  
+  .deck-card {
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border, #eee);
+    border-radius: 8px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .deck-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  }
+
+  .flip-card {
+    background-color: transparent;
+    width: 100%;
+    height: 300px;
+    perspective: 1000px;
+    margin: 2rem 0;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .flip-card-front {
+    background-color: #fff;
+    color: var(--text-dark, #0c1b33);
+    border: 2px solid var(--primary, #0056b3);
+  }
+
+  .flip-card-back {
+    background-color: var(--primary, #0056b3);
+    color: white;
+    transform: rotateY(180deg);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+  <div style="max-width: 800px; margin: 0 auto;">
+    
+    <a href="{% url 'tools_hub' %}" style="display: inline-block; margin-bottom: 1.5rem; color: var(--primary, #0056b3); text-decoration: none; font-size: 0.9rem;">
+      &larr; Back to Tools
+    </a>
+
+    <!-- VIEW 1: DECKS LIST -->
+    <div id="view-decks" class="fc-view active">
+      <h1 style="margin-top: 0; color: var(--text-dark, #0c1b33);">📇 My Flashcards</h1>
+      <p style="color: var(--text-muted); margin-bottom: 2rem;">Create decks for your courses and test your knowledge. Saved securely on this device.</p>
+
+      <div style="background: var(--bg-light, #f8f9fa); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
+        <h3 style="margin-top: 0;">Create New Deck</h3>
+        <form id="form-new-deck" style="display: flex; gap: 1rem;">
+          <input type="text" id="new-deck-name" placeholder="e.g. CSC 401 Definitions" required style="flex: 1; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px;">
+          <button type="submit" class="btn btn--primary">Create</button>
+        </form>
+      </div>
+
+      <div id="decks-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
+        <!-- Decks injected here -->
+      </div>
+    </div>
+
+    <!-- VIEW 2: DECK DETAILS -->
+    <div id="view-deck-detail" class="fc-view">
+      <button onclick="showView('decks')" class="btn btn--ghost" style="margin-bottom: 1rem; padding: 0.5rem 0;">&larr; Back to Decks</button>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h1 id="detail-deck-name" style="margin: 0; color: var(--text-dark);">Deck Name</h1>
+        <button onclick="startStudy()" class="btn btn--primary" id="btn-start-study">Start Quiz</button>
+      </div>
+      <p style="color: var(--text-muted); margin-bottom: 2rem;" id="detail-deck-count">0 cards</p>
+
+      <div style="background: var(--bg-light, #f8f9fa); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
+        <h3 style="margin-top: 0;">Add New Card</h3>
+        <form id="form-new-card">
+          <input type="text" id="new-card-q" placeholder="Question / Term" required style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; margin-bottom: 1rem;">
+          <textarea id="new-card-a" placeholder="Answer / Definition" required style="width: 100%; padding: 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 6px; margin-bottom: 1rem; resize: vertical; min-height: 80px;"></textarea>
+          <button type="submit" class="btn btn--primary" style="width: 100%;">Add Card</button>
+        </form>
+      </div>
+
+      <h3 style="border-bottom: 2px solid var(--border); padding-bottom: 0.5rem;">Cards in this Deck</h3>
+      <div id="cards-container" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Cards injected here -->
+      </div>
+    </div>
+
+    <!-- VIEW 3: STUDY MODE -->
+    <div id="view-study" class="fc-view">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 id="study-deck-name" style="margin: 0; color: var(--text-dark);">Deck Name</h2>
+        <button onclick="showView('deck-detail')" class="btn btn--ghost" style="color: #d9534f;">End Quiz</button>
+      </div>
+      
+      <div style="text-align: center; color: var(--text-muted); font-weight: bold;" id="study-progress">Card 1 of 5</div>
+
+      <div class="flip-card" id="flashcard" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" id="study-q">Question</div>
+          <div class="flip-card-back" id="study-a">Answer</div>
+        </div>
+      </div>
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Click card to flip</p>
+
+      <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <button onclick="studyPrev()" class="btn btn--ghost" style="flex: 1;">&larr; Previous</button>
+        <button onclick="studyNext()" class="btn btn--primary" style="flex: 1;">Next &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// State
+let decks = JSON.parse(localStorage.getItem('bb_flashcards')) || [];
+let activeDeckId = null;
+let studyIndex = 0;
+
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+    renderDecks();
+});
+
+function saveDecks() {
+    localStorage.setItem('bb_flashcards', JSON.stringify(decks));
+}
+
+function showView(viewName) {
+    document.querySelectorAll('.fc-view').forEach(v => v.classList.remove('active'));
+    document.getElementById(`view-${viewName}`).classList.add('active');
+}
+
+// --- View 1: Decks ---
+function renderDecks() {
+    const container = document.getElementById('decks-container');
+    container.innerHTML = '';
+    
+    if (decks.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">You have no decks yet. Create one above!</p>';
+        return;
+    }
+
+    decks.forEach(deck => {
+        const div = document.createElement('div');
+        div.className = 'deck-card';
+        div.onclick = () => openDeck(deck.id);
+        
+        div.innerHTML = `
+            <h3 style="margin-top: 0; color: var(--primary);">${escapeHtml(deck.name)}</h3>
+            <p style="margin: 0; color: var(--text-muted);">${deck.cards.length} cards</p>
+        `;
+        container.appendChild(div);
+    });
+}
+
+document.getElementById('form-new-deck').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('new-deck-name');
+    const name = input.value.trim();
+    if (name) {
+        decks.push({
+            id: Date.now().toString(),
+            name: name,
+            cards: []
+        });
+        saveDecks();
+        input.value = '';
+        renderDecks();
+    }
+});
+
+// --- View 2: Deck Details ---
+function openDeck(deckId) {
+    activeDeckId = deckId;
+    const deck = decks.find(d => d.id === deckId);
+    if(!deck) return;
+
+    document.getElementById('detail-deck-name').textContent = deck.name;
+    document.getElementById('detail-deck-count').textContent = `${deck.cards.length} cards`;
+    document.getElementById('btn-start-study').style.display = deck.cards.length > 0 ? 'block' : 'none';
+    
+    renderCards();
+    showView('deck-detail');
+}
+
+function renderCards() {
+    const deck = decks.find(d => d.id === activeDeckId);
+    const container = document.getElementById('cards-container');
+    container.innerHTML = '';
+
+    if (deck.cards.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No cards in this deck yet.</p>';
+        return;
+    }
+
+    deck.cards.forEach((card, index) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; position: relative;';
+        
+        div.innerHTML = `
+            <button onclick="deleteCard(${index})" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #d9534f; cursor: pointer; font-size: 1.2rem;">&times;</button>
+            <div style="font-weight: bold; margin-bottom: 0.5rem; padding-right: 2rem;">Q: ${escapeHtml(card.q)}</div>
+            <div style="color: var(--text-muted);">A: ${escapeHtml(card.a).replace(/\n/g, '<br>')}</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+document.getElementById('form-new-card').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const qInput = document.getElementById('new-card-q');
+    const aInput = document.getElementById('new-card-a');
+    
+    const deck = decks.find(d => d.id === activeDeckId);
+    if(deck && qInput.value.trim() && aInput.value.trim()) {
+        deck.cards.push({
+            q: qInput.value.trim(),
+            a: aInput.value.trim()
+        });
+        saveDecks();
+        qInput.value = '';
+        aInput.value = '';
+        
+        document.getElementById('detail-deck-count').textContent = `${deck.cards.length} cards`;
+        document.getElementById('btn-start-study').style.display = 'block';
+        renderCards();
+        renderDecks(); // update counts on main screen
+    }
+});
+
+function deleteCard(index) {
+    if(confirm('Delete this card?')) {
+        const deck = decks.find(d => d.id === activeDeckId);
+        deck.cards.splice(index, 1);
+        saveDecks();
+        document.getElementById('detail-deck-count').textContent = `${deck.cards.length} cards`;
+        document.getElementById('btn-start-study').style.display = deck.cards.length > 0 ? 'block' : 'none';
+        renderCards();
+        renderDecks();
+    }
+}
+
+// --- View 3: Study Mode ---
+function startStudy() {
+    const deck = decks.find(d => d.id === activeDeckId);
+    if(!deck || deck.cards.length === 0) return;
+    
+    document.getElementById('study-deck-name').textContent = deck.name;
+    studyIndex = 0;
+    renderStudyCard();
+    showView('study');
+}
+
+function renderStudyCard() {
+    const deck = decks.find(d => d.id === activeDeckId);
+    const card = deck.cards[studyIndex];
+    
+    document.getElementById('study-progress').textContent = `Card ${studyIndex + 1} of ${deck.cards.length}`;
+    document.getElementById('study-q').innerHTML = escapeHtml(card.q);
+    document.getElementById('study-a').innerHTML = escapeHtml(card.a).replace(/\n/g, '<br>');
+    
+    // reset flip
+    document.getElementById('flashcard').classList.remove('flipped');
+}
+
+function studyNext() {
+    const deck = decks.find(d => d.id === activeDeckId);
+    if (studyIndex < deck.cards.length - 1) {
+        studyIndex++;
+        renderStudyCard();
+    } else {
+        alert("You've reached the end of the deck!");
+        showView('deck-detail');
+    }
+}
+
+function studyPrev() {
+    if (studyIndex > 0) {
+        studyIndex--;
+        renderStudyCard();
+    }
+}
+
+// Utils
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+</script>
+{% endblock %}

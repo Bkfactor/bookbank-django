@@ -169,3 +169,13 @@ def target_cgpa(request):
 def citation_generator(request):
     """A client-side APA Citation Generator."""
     return render(request, "core/citation_generator.html")
+
+
+def flashcards(request):
+    """A client-side Flashcard/Quiz tool using localStorage."""
+    return render(request, "core/flashcards.html")
+
+
+def exam_tracker(request):
+    """A client-side Exam Tracker with Notifications using localStorage."""
+    return render(request, "core/exam_tracker.html")
