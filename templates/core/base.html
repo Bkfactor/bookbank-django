@@ -16,6 +16,7 @@
         <div class="navbar__brand-icon">📚</div>
         <div>LCU Book Bank<span class="navbar__brand-sub">Student Ambassador Team</span></div>
       </a>
+      <button class="navbar__toggle" aria-label="Toggle Menu" onclick="document.querySelector('.navbar__nav').classList.toggle('open')">☰</button>
       <nav class="navbar__nav">
         <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a>
         <a href="{% url 'home' %}#faculties">Faculties</a>
