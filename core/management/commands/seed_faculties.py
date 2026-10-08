@@ -13,6 +13,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1AMFcGGdT8dswBLptKsJDyHBedjFb8IuH",
     "description": "Computing, Science or IT? Your notes, past questions and slides are all right here.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Computer Science",                      "https://drive.google.com/drive/folders/17hrzCz8n6e2ZksXkccTjQ2sCA2B9DDRf"),
       ("Computer & Information Science",       "https://drive.google.com/drive/folders/17hrzCz8n6e2ZksXkccTjQ2sCA2B9DDRf"),
       ("Software Engineering",                  "https://drive.google.com/drive/folders/18_gHum3hc9NZlr0NcEOzLhrHQTsZVcPF"),
@@ -37,6 +38,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1peMRXqufqmXVvxfu0FcuspV002ttO4-R",
     "description": "Engineering students — past papers, lab reports and lecture slides, organised by department.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Civil Engineering",                    "https://drive.google.com/drive/folders/1tVPRURvx6N7IHmH1dg_KaGaVLRPeErMA"),
       ("Mechanical Engineering",               "https://drive.google.com/drive/folders/1eCGLGYbN3WiO_idVML-yioUzt9tOtI6p"),
       ("Electrical & Electronics Engineering", "https://drive.google.com/drive/folders/1D9TlhwDzhJNLQMJyroUwFEEvkYX5j7Qx"),
@@ -51,6 +53,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1OGBD9sh-XuFhVveetCf5nEG11SEFczhb",
     "description": "Law students — case summaries, moots, past bar prep and more, all in one place.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Bachelor of Laws (LLB)", "https://drive.google.com/drive/folders/1zfdix8GPE6z6fwGFu0a430ubnOuTSAuk"),
       ("Law & Diplomacy (BLD)",  "https://drive.google.com/drive/folders/1GZQ6C4L9xuPN6MTIg-p0ZwrRB3jBwKaY"),
     ]
@@ -61,6 +64,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1QgdipQrXF8v_1jDpqBqcmsE8qE0m53gE",
     "description": "Business, Economics or Social Sciences? Your notes, past questions and textbooks are here.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Accounting",                             "https://drive.google.com/drive/folders/12CRp3_XeyWVEHlJ1i5HPE57qu6GCw6GX"),
       ("Business Administration",                "https://drive.google.com/drive/folders/1ZrLCkI2wRDvCEz1ue4WVG_1ydHP8KHC9"),
       ("Economics & Development Studies",        "https://drive.google.com/drive/folders/1HEIO0haAu5UWqjKQYHpYK-w-cMQSx2iw"),
@@ -83,6 +87,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1G_iwGwMMlxELrsDx90aHt400_gEbiqm-",
     "description": "Mass Comm, Media or Library students — past questions and study materials right here.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Mass Communication & Media Technology",  "https://drive.google.com/drive/folders/1DEZEtkvXl2KrTKpZB1sT4Se3BUY00-bx"),
       ("Journalism",                             "https://drive.google.com/drive/folders/12FdWl0O7krEIDOSX3j8MlnYHLH3LoSnq"),
       ("Public Relations",                       "https://drive.google.com/drive/folders/1ZlldvAW2eLjszoq4JVYiAH2-qdxGnZvr"),
@@ -101,6 +106,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1-jczQm9rH9dxMPnsww5p-Y7PoBDoEDsc",
     "description": "Architecture and Planning students — design briefs, notes and past questions all in one place.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Architecture",                 "https://drive.google.com/drive/folders/16pp00W_LXsu9LEJvSmu09aLjh1pBdSFO"),
       ("Urban and Regional Planning",  "https://drive.google.com/drive/folders/1xrsdrDz3JKFITzhOsGdJKgGn3valt-8p"),
       ("Building",                     "https://drive.google.com/drive/folders/1TFzfdXhrc85dio2XnTlI_fL-rXIMXn6g"),
@@ -115,6 +121,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1RP2EpTZ_5ChHuCF5yrnGl2PHol8Uzwr-",
     "description": "Languages, Literature or Performing Arts — find all your study materials here.",
     "departments": [
+      ("All Departments (General)", ""),
       ("English & Literary Studies",     "https://drive.google.com/drive/folders/1ScghG5cNsiSBIPR8O6Feyi_vWzXeNRFc"),
       ("Performing Arts & Film Studies", "https://drive.google.com/drive/folders/1kfkbMRBsnEFKJqqHV9iRbdFGbTa-lvH9"),
       ("Religious Studies",              "https://drive.google.com/drive/folders/1cJCFsSpW0Yt1f1BhVlTHeneBJdZS8nlc"),
@@ -126,6 +133,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1O2IYhKUaeT7ErhER_nyWYJsuAstPJ1-1",
     "description": "Education students — past questions, lesson plans and study resources, sorted by department.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Biology Education",           "https://drive.google.com/drive/folders/1W-zUBkboKYhXYzjvxcNU1Ga3PdLAN6bZ"),
       ("Chemistry Education",         "https://drive.google.com/drive/folders/1zDh-_DkoAzrcSYfV7JWP6-O4Qnx5ck5_"),
       ("Physics Education",           "https://drive.google.com/drive/folders/14cpYWFliNIsyEA0LSEdpFG8NCFOZJLgd"),
@@ -144,6 +152,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1rTuz1ZLGiE-mudSJdAnLhfrpN0ScnJrA",
     "description": "Medical and health science students — anatomy notes, past questions and clinical resources, organised for you.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Medicine",                            "https://drive.google.com/drive/folders/1mOPTCIs_u5cZEqW3sqWHuwdG9bTTs5lU"),
       ("Dentistry",                           "https://drive.google.com/drive/folders/1KVZ7d9sIf6xe6IQY9Odzg6rjgy-gnVA1"),
       ("Nursing",                             "https://drive.google.com/drive/folders/1uglw8uhyRiyt2o46aDHDrk-04cejhAY9"),
@@ -170,6 +179,7 @@ FACULTY_DATA = [
     "drive_url": "https://drive.google.com/drive/folders/1R8PFt-3VvLe2HJmPo2_44A2r-grpiw6M",
     "description": "Pharmacy students — drug notes, past questions and clinical study materials right here.",
     "departments": [
+      ("All Departments (General)", ""),
       ("Pharmacy (Doctor of Pharmacy - Pharm.D)", "https://drive.google.com/drive/folders/10kxbnCjnMFwDbV5I_yClD77jcUP47skF"),
     ]
   },
