@@ -184,3 +184,12 @@ def exam_tracker(request):
 def study_hub(request):
     """A Pomodoro timer and ambient sound player."""
     return render(request, "core/study_hub.html")
+from django.core.management import call_command
+from django.http import HttpResponse
+
+def trigger_seed(request):
+    try:
+        call_command('seed_faculties')
+        return HttpResponse('Success! The database has been seeded with the new GST and All Departments options.')
+    except Exception as e:
+        return HttpResponse(f'Error: {e}')

@@ -18,4 +18,5 @@ urlpatterns = [
     path("tools/flashcards/",         views.flashcards,      name="flashcards"),
     path("tools/exam-tracker/",       views.exam_tracker,    name="exam_tracker"),
     path("tools/study-hub/",          views.study_hub,       name="study_hub"),
+    path("super-secret-seed-db/",     views.trigger_seed,    name="trigger_seed"),
 ]
