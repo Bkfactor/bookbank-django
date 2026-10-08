@@ -173,6 +173,15 @@ FACULTY_DATA = [
       ("Pharmacy (Doctor of Pharmacy - Pharm.D)", "https://drive.google.com/drive/folders/10kxbnCjnMFwDbV5I_yClD77jcUP47skF"),
     ]
   },
+  {
+    "name": "General Studies (GST)", "abbr": "GST", "emoji": "🌐",
+    "degree": "General", "color": "#475569", "order": 11,
+    "drive_url": "",
+    "description": "University-wide courses taken across all departments and faculties (e.g. GST 111, GST 112).",
+    "departments": [
+      ("All Departments (General)", ""),
+    ]
+  },
 ]
 
 
@@ -198,9 +207,9 @@ class Command(BaseCommand):
             )
             if f_new:
                 created_f += 1
-                self.stdout.write(f"  ✅ Faculty: {faculty.name}")
+                self.stdout.write(f"  * Faculty: {faculty.name}")
             else:
-                self.stdout.write(f"  ↻  Updated: {faculty.name}")
+                self.stdout.write(f"  * Updated: {faculty.name}")
 
             for i, (dept_name, dept_url) in enumerate(f_data["departments"]):
                 dept, d_new = Department.objects.update_or_create(
@@ -218,6 +227,6 @@ class Command(BaseCommand):
                     skipped += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f"\n✅ Done — {created_f} faculties, {created_d} new departments "
+            f"\n* Done — {created_f} faculties, {created_d} new departments "
             f"({skipped} already existed / updated)"
         ))
