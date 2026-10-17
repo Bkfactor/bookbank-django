@@ -302,15 +302,13 @@ class Command(BaseCommand):
                 else:
                     updated_d += 1
 
-            # Remove any departments in this faculty not in the seed list
-            stale = Department.objects.filter(faculty=faculty).exclude(slug__in=valid_slugs)
-            stale_count = stale.count()
-            if stale_count:
-                for s in stale:
-                    self.stdout.write(self.style.WARNING(f"      - Removed stale: {s.name}"))
-                stale.delete()
+            # NOTE: We intentionally do NOT delete old departments here.
+            # Departments have CASCADE-linked Resources — deleting a department
+            # would permanently destroy all uploaded documents under it.
+            # To retire a department, do it manually via the admin panel
+            # after reassigning or archiving its resources.
 
-        self.stdout.write(self.style.SUCCESS(
+        self.stdout.write(
             f"\nDone -- {created_f} new faculties, {created_d} new departments, "
             f"{updated_d} updated"
-        ))
+        )
