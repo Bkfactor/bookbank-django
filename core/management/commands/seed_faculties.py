@@ -184,6 +184,7 @@ FACULTY_DATA = [
             ("Mathematics Education",                   "https://drive.google.com/drive/folders/1aa2XRl1LFZOC5H6wOJjnxtB3JKob37iD"),
             ("Physics Education",                       "https://drive.google.com/drive/folders/14cpYWFliNIsyEA0LSEdpFG8NCFOZJLgd"),
             # --- B.A. (Ed) ---
+            ("English Language Education",              "https://drive.google.com/drive/folders/1LLZu_X6cV7DfWV-0Lyok47y9tSHKcr1m"),
             ("Education",                               ""),
             # --- B.Ed ---
             ("Business Education",                      "https://drive.google.com/drive/folders/1G35s4ujK2W94xlVMGPD8J8L7nbSnqVUw"),
