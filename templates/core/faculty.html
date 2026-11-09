@@ -31,7 +31,7 @@
 
   <!-- Materials -->
   {% if active_dept %}
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem;">
     <h2 style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--navy);">
       {{ active_dept.name }}
     </h2>
@@ -39,6 +39,23 @@
     <a href="{{ active_dept.drive_url }}" target="_blank" class="btn btn--outline btn--sm">📂 Open Drive Folder</a>
     {% endif %}
   </div>
+
+  <!-- Level filter pills (only shown when there are multiple levels) -->
+  {% if available_levels %}
+  <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;align-items:center;">
+    <span style="font-size:.78rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">Filter:</span>
+    <a href="{% url 'faculty' faculty.slug %}?dept={{ active_dept.slug }}"
+       style="padding:.3rem .75rem;border-radius:999px;font-size:.82rem;font-weight:600;border:1.5px solid {% if not active_level %}{{ faculty.color }}{% else %}var(--border){% endif %};background:{% if not active_level %}{{ faculty.color }}{% else %}transparent{% endif %};color:{% if not active_level %}#fff{% else %}var(--text){% endif %};text-decoration:none;">
+      All Levels
+    </a>
+    {% for lvl in available_levels %}
+    <a href="{% url 'faculty' faculty.slug %}?dept={{ active_dept.slug }}&level={{ lvl }}"
+       style="padding:.3rem .75rem;border-radius:999px;font-size:.82rem;font-weight:600;border:1.5px solid {% if active_level == lvl %}{{ faculty.color }}{% else %}var(--border){% endif %};background:{% if active_level == lvl %}{{ faculty.color }}{% else %}transparent{% endif %};color:{% if active_level == lvl %}#fff{% else %}var(--text){% endif %};text-decoration:none;">
+      {{ lvl }} Level
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   {% if materials %}
   <div class="materials-grid">
@@ -49,8 +66,13 @@
   {% else %}
   <div class="empty-state">
     <div class="empty-state__icon">📂</div>
+    {% if active_level %}
+    <p class="empty-state__title">No {{ active_level }}-level materials yet for {{ active_dept.name }}</p>
+    <p class="empty-state__sub">Try a different level, or be the first to submit one.</p>
+    {% else %}
     <p class="empty-state__title">No materials yet for {{ active_dept.name }}</p>
     <p class="empty-state__sub">Know a course rep with notes? Send them the submit link.</p>
+    {% endif %}
     <div class="empty-state__actions">
       {% if active_dept.drive_url %}
       <a href="{{ active_dept.drive_url }}" target="_blank" class="btn btn--outline">Open Drive Folder →</a>

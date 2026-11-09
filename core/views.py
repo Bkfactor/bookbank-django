@@ -29,15 +29,37 @@ def faculty_detail(request, slug):
     else:
         active_dept = departments.first()
 
-    materials = Resource.objects.filter(
+    # Level filter
+    level_param = request.GET.get("level", "")
+    try:
+        active_level = int(level_param) if level_param else None
+    except ValueError:
+        active_level = None
+
+    qs = Resource.objects.filter(
         department=active_dept, status="approved"
-    ).order_by("-published_at") if active_dept else []
+    ) if active_dept else Resource.objects.none()
+
+    if active_level:
+        qs = qs.filter(level=active_level)
+
+    materials = qs.order_by("-published_at")
+
+    # Get which levels actually have materials in this dept (for showing filter buttons)
+    available_levels = (
+        Resource.objects.filter(department=active_dept, status="approved")
+        .values_list("level", flat=True)
+        .distinct()
+        .order_by("level")
+    ) if active_dept else []
 
     return render(request, "core/faculty.html", {
-        "faculty":     faculty,
-        "departments": departments,
-        "active_dept": active_dept,
-        "materials":   materials,
+        "faculty":          faculty,
+        "departments":      departments,
+        "active_dept":      active_dept,
+        "materials":        materials,
+        "active_level":     active_level,
+        "available_levels": available_levels,
     })
 
 
