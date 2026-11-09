@@ -43,10 +43,17 @@
 
       <!-- Title -->
       <div class="form-group">
-        <label class="form-label">Material Title *</label>
+        <label class="form-label">Course / Subject *</label>
+        {{ form.course_name }}
+        {% if form.course_name.errors %}<p class="form-error">{{ form.course_name.errors.0 }}</p>{% endif %}
+        <p class="form-hint">The specific course this material belongs to — e.g. <strong>Pharmacology</strong>, <strong>GST 111</strong>, <strong>Constitutional Law</strong>.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Material Description *</label>
         {{ form.title }}
         {% if form.title.errors %}<p class="form-error">{{ form.title.errors.0 }}</p>{% endif %}
-        <p class="form-hint">Be specific: "CSC 301 Past Questions 2023/2024" not just "Past Questions"</p>
+        <p class="form-hint">What kind of material is it? e.g. <strong>Past Questions 2023/2024</strong>, <strong>Lecture Notes</strong>, <strong>Textbook</strong>. This will be combined with the course above.</p>
       </div>
 
       <!-- Type -->

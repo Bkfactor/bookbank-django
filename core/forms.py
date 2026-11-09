@@ -11,6 +11,12 @@ class SubmitResourceForm(forms.ModelForm):
         label="Your Name",
         widget=forms.TextInput(attrs={"placeholder": "e.g. Leevi Benjamin or Anonymous"})
     )
+    course_name = forms.CharField(
+        max_length=200,
+        label="Course / Subject",
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Pharmacology, GST 111, Constitutional Law"}),
+        help_text="The specific course or subject this material is for."
+    )
     contact = forms.EmailField(
         required=False,
         label="Email (optional)",
@@ -32,7 +38,7 @@ class SubmitResourceForm(forms.ModelForm):
         fields = ["title", "type", "faculty", "department",
                   "level", "year", "drive_url"]
         labels = {
-            "title":     "Material Title",
+            "title":     "Material Description",
             "type":      "Material Type",
             "level":     "Level",
             "year":      "Academic Year (optional)",
@@ -41,7 +47,7 @@ class SubmitResourceForm(forms.ModelForm):
         }
         widgets = {
             "title": forms.TextInput(attrs={
-                "placeholder": "e.g. GST 107 Past Questions 2023/2024"
+                "placeholder": "e.g. Past Questions 2023/2024, Lecture Notes, Textbook"
             }),
             "year": forms.TextInput(attrs={"placeholder": "e.g. 2023/2024"}),
             "drive_url": forms.URLInput(attrs={
@@ -79,6 +85,13 @@ class SubmitResourceForm(forms.ModelForm):
         instance.uploaded_by = self.cleaned_data.get("name", "Anonymous")
         instance.contact     = self.cleaned_data.get("contact", "")
         instance.status      = "pending"
+        # Combine course name + description into the title
+        course_name = self.cleaned_data.get("course_name", "").strip()
+        description = self.cleaned_data.get("title", "").strip()
+        if course_name and description:
+            instance.title = f"{course_name} — {description}"
+        elif course_name:
+            instance.title = course_name
         if commit:
             instance.save()
         return instance
